@@ -813,6 +813,5 @@ server.listen(PORT, () => {
     console.log('\n');
 
     // 初始化数据
-    const http = require('http');
     http.get('http://localhost:' + PORT + '/api/init', () => {});
 });
