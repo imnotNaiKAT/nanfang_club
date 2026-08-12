@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 消息</title>
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <style>
+        /* 消息页面专用样式 */
+        .messages-page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .messages-tabs {
+            display: flex;
+            background-color: var(--section-bg);
+            border-radius: var(--border-radius-lg);
+            margin-bottom: var(--spacing-lg);
+            overflow: hidden;
+        }
+
+        .messages-tab {
+            flex: 1;
+            padding: var(--spacing-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-bottom: 2px solid transparent;
+        }
+
+        .messages-tab:hover {
+            background-color: var(--navbar-hover);
+        }
+
+        .messages-tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-color: var(--primary-color);
+        }
+
+        .messages-tab .badge {
+            display: inline-block;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: var(--spacing-xs);
+        }
+
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .message-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md);
+            background-color: var(--section-bg);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .message-item:hover {
+            background-color: var(--banner-hover-bg);
+        }
+
+        .message-item.unread {
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .message-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .message-time {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        .message-preview {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .message-type {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: var(--border-radius-sm);
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .message-type.like {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        .message-type.comment {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+
+        .message-type.follow {
+            background-color: #dcfce7;
+            color: #22c55e;
+        }
+
+        .message-type.system {
+            background-color: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .empty-messages {
+            text-align: center;
+            padding: var(--spacing-xl) * 2;
+            color: var(--text-tertiary);
+        }
+
+        .empty-messages-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* 通知设置 */
+        .notification-settings {
+            padding: var(--spacing-md);
+        }
+
+        .notification-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .messages-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+
+            .message-item {
+                padding: var(--spacing-sm);
+            }
+
+            .message-avatar {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="messages.html" class="nav-link active">消息</a>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content messages-page">
+        <!-- 消息标签页 -->
+        <div class="messages-tabs">
+            <div class="messages-tab active" data-tab="all" onclick="switchMessageTab('all')">
+                全部
+                <span class="badge" id="badge-all" style="display:none;">0</span>
+            </div>
+            <div class="messages-tab" data-tab="likes" onclick="switchMessageTab('likes')">
+                点赞
+                <span class="badge" id="badge-likes" style="display:none;">0</span>
+            </div>
+            <div class="messages-tab" data-tab="comments" onclick="switchMessageTab('comments')">
+                评论
+                <span class="badge" id="badge-comments" style="display:none;">0</span>
+            </div>
+            <div class="messages-tab" data-tab="follows" onclick="switchMessageTab('follows')">
+                关注
+                <span class="badge" id="badge-follows" style="display:none;">0</span>
+            </div>
+            <div class="messages-tab" data-tab="system" onclick="switchMessageTab('system')">
+                系统
+                <span class="badge" id="badge-system" style="display:none;">0</span>
+            </div>
+        </div>
+
+        <!-- 消息列表 -->
+        <div class="message-list" id="message-list">
+            <!-- 消息将通过JS动态加载 -->
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-messages" id="empty-messages" style="display:none;">
+            <div class="empty-messages-icon">📭</div>
+            <p>暂无消息</p>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/mobile.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 消息系统
+        const Messages = {
+            currentTab: 'all',
+
+            init: function() {
+                this.loadMessages();
+                this.updateBadges();
+            },
+
+            // 加载消息列表
+            loadMessages: function() {
+                const currentUser = Auth.currentUser;
+                if (!currentUser) {
+                    document.getElementById('empty-messages').style.display = 'block';
+                    document.getElementById('message-list').innerHTML = '';
+                    return;
+                }
+
+                const messages = Storage.get('messages') || [];
+                const userMessages = messages.filter(m => m.toUserId === currentUser.id);
+
+                // 根据当前标签过滤
+                let filtered = userMessages;
+                if (this.currentTab !== 'all') {
+                    filtered = userMessages.filter(m => m.type === this.currentTab);
+                }
+
+                // 按时间排序
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                const listEl = document.getElementById('message-list');
+                const emptyEl = document.getElementById('empty-messages');
+
+                if (filtered.length === 0) {
+                    listEl.innerHTML = '';
+                    emptyEl.style.display = 'block';
+                    return;
+                }
+
+                emptyEl.style.display = 'none';
+                listEl.innerHTML = filtered.map(msg => this.renderMessage(msg)).join('');
+            },
+
+            // 渲染单条消息
+            renderMessage: function(msg) {
+                const users = Storage.get('users') || [];
+                const sender = users.find(u => u.id === msg.fromUserId);
+                const senderName = sender ? sender.nickname : '系统';
+                const senderAvatar = sender ? (sender.avatar || 'assets/images/default_avatar.png') : 'assets/images/default_avatar.png';
+
+                const typeLabels = {
+                    'like': '点赞',
+                    'comment': '评论',
+                    'follow': '关注',
+                    'system': '系统'
+                };
+
+                const timeAgo = this.formatTimeAgo(new Date(msg.createdAt));
+
+                return `
+                    <div class="message-item ${msg.read ? '' : 'unread'}" onclick="Messages.openMessage('${msg.id}')">
+                        <img src="${senderAvatar}" alt="头像" class="message-avatar">
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="message-sender">${senderName}</span>
+                                <span class="message-time">${timeAgo}</span>
+                            </div>
+                            <div class="message-preview">
+                                <span class="message-type ${msg.type}">${typeLabels[msg.type] || '通知'}</span>
+                                ${msg.content}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // 格式化时间
+            formatTimeAgo: function(date) {
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
+
+                if (diff < 60) return '刚刚';
+                if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+                if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+                if (diff < 604800) return Math.floor(diff / 86400) + '天前';
+                return date.toLocaleDateString();
+            },
+
+            // 更新未读数量
+            updateBadges: function() {
+                const currentUser = Auth.currentUser;
+                if (!currentUser) return;
+
+                const messages = Storage.get('messages') || [];
+                const userMessages = messages.filter(m => m.toUserId === currentUser.id && !m.read);
+
+                // 各类型未读数
+                const counts = {
+                    all: userMessages.length,
+                    likes: userMessages.filter(m => m.type === 'like').length,
+                    comments: userMessages.filter(m => m.type === 'comment').length,
+                    follows: userMessages.filter(m => m.type === 'follow').length,
+                    system: userMessages.filter(m => m.type === 'system').length
+                };
+
+                // 更新徽章
+                Object.keys(counts).forEach(key => {
+                    const badge = document.getElementById('badge-' + key);
+                    if (badge) {
+                        if (counts[key] > 0) {
+                            badge.textContent = counts[key] > 99 ? '99+' : counts[key];
+                            badge.style.display = 'inline-block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                });
+            },
+
+            // 打开消息
+            openMessage: function(msgId) {
+                const messages = Storage.get('messages') || [];
+                const msg = messages.find(m => m.id === msgId);
+                if (!msg) return;
+
+                // 标记为已读
+                msg.read = true;
+                Storage.set('messages', messages);
+
+                // 根据类型跳转
+                if (msg.type === 'like' || msg.type === 'comment') {
+                    if (msg.postId) {
+                        window.location.href = 'post-detail.html?id=' + msg.postId;
+                    }
+                } else if (msg.type === 'follow') {
+                    if (msg.fromUserId) {
+                        window.location.href = 'user.html?id=' + msg.fromUserId;
+                    }
+                }
+
+                this.updateBadges();
+            },
+
+            // 发送消息
+            send: function(toUserId, type, content, postId = null) {
+                const currentUser = Auth.currentUser;
+                if (!currentUser) return;
+
+                const messages = Storage.get('messages') || [];
+                const newMsg = {
+                    id: 'msg_' + Date.now(),
+                    fromUserId: currentUser.id,
+                    toUserId: toUserId,
+                    type: type,
+                    content: content,
+                    postId: postId,
+                    read: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                messages.push(newMsg);
+                Storage.set('messages', messages);
+            }
+        };
+
+        // 切换标签
+        function switchMessageTab(tab) {
+            Messages.currentTab = tab;
+
+            // 更新标签样式
+            document.querySelectorAll('.messages-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.messages-tab[data-tab="${tab}"]`).classList.add('active');
+
+            // 重新加载消息
+            Messages.loadMessages();
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            Messages.init();
+        });
+    </script>
+</body>
+</html>

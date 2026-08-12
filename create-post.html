@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布帖子 - 楠芳·俱乐部</title>
+    <meta name="theme-color" content="#2563eb">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <style>
+        /* 发布页面样式 - 小红书风格 */
+        .create-post-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .create-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 60px;
+            z-index: 10;
+        }
+
+        .create-post-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .publish-btn {
+            padding: 8px 24px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .publish-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .publish-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 图片上传区域 */
+        .image-upload-section {
+            margin-bottom: 24px;
+        }
+
+        .image-upload-area {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .image-upload-area {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .image-upload-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: var(--bg-tertiary);
+        }
+
+        .image-upload-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-upload-item .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .add-image-btn {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+            background-color: var(--bg-tertiary);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .add-image-btn:hover {
+            border-color: var(--primary-color);
+            background-color: var(--banner-hover-bg);
+        }
+
+        .add-image-btn .icon {
+            font-size: 2rem;
+            color: var(--text-tertiary);
+        }
+
+        .add-image-btn .text {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        /* 标题输入 */
+        .title-input {
+            width: 100%;
+            padding: 16px 0;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            background-color: transparent;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .title-input:focus {
+            border-bottom-color: var(--primary-color);
+        }
+
+        .title-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* 内容输入 */
+        .content-input {
+            width: 100%;
+            min-height: 300px;
+            padding: 16px 0;
+            border: none;
+            background-color: transparent;
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.8;
+            resize: none;
+            outline: none;
+        }
+
+        .content-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* 标签输入 */
+        .tags-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .tags-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .tags-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .tag-item {
+            padding: 6px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-item .remove {
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .tag-input {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 0;
+            border: none;
+            background: transparent;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .tag-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* 提示信息 */
+        .tips-section {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: var(--bg-tertiary);
+            border-radius: 12px;
+        }
+
+        .tips-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips-list li {
+            padding: 6px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .tips-list li::before {
+            content: "• ";
+            color: var(--primary-color);
+        }
+
+        /* 字数统计 */
+        .char-count {
+            text-align: right;
+            padding: 8px 0;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        /* 加载状态 */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--bg-tertiary);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <button class="back-btn" onclick="history.back()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--navbar-text);">&#8592;</button>
+                <div class="logo-area">
+                    <span class="site-name">发布帖子</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <div class="create-post-container">
+            <!-- 头部 -->
+            <div class="create-post-header">
+                <div class="create-post-title">发布新帖子</div>
+                <button class="publish-btn" id="publish-btn" onclick="publishPost()">发布</button>
+            </div>
+
+            <!-- 图片上传区域 -->
+            <div class="image-upload-section">
+                <div class="image-upload-area" id="image-upload-area">
+                    <div class="add-image-btn" onclick="document.getElementById('image-input').click()">
+                        <div class="icon">+</div>
+                        <div class="text">添加图片</div>
+                    </div>
+                </div>
+                <input type="file" id="image-input" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(this)">
+                <div class="char-count">已上传 <span id="image-count">0</span>/9 张图片</div>
+            </div>
+
+            <!-- 标题输入 -->
+            <input type="text" class="title-input" id="post-title" placeholder="填写标题会有更多赞哦~" maxlength="50" oninput="updateCharCount()">
+
+            <!-- 内容输入 -->
+            <textarea class="content-input" id="post-content" placeholder="分享你的生活点滴...支持Markdown格式" oninput="updateCharCount()"></textarea>
+
+            <div class="char-count">
+                <span id="title-count">0</span>/50 字 | 内容 <span id="content-count">0</span> 字
+            </div>
+
+            <!-- 标签区域 -->
+            <div class="tags-section">
+                <div class="tags-label">添加标签（让更多人看到你的帖子）</div>
+                <div class="tags-input-container" id="tags-container">
+                    <input type="text" class="tag-input" id="tag-input" placeholder="输入标签后按回车添加" onkeypress="handleTagInput(event)">
+                </div>
+            </div>
+
+            <!-- 提示信息 -->
+            <div class="tips-section">
+                <div class="tips-title">💡 发布提示</div>
+                <ul class="tips-list">
+                    <li>标题和内容不能为空</li>
+                    <li>最多上传9张图片，支持 jpg/png/gif 格式</li>
+                    <li>内容支持 Markdown 格式，让排版更美观</li>
+                    <li>添加标签可以让更多人看到你的帖子</li>
+                    <li>请文明发言，避免敏感内容</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- 加载状态 -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/mobile.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 发布帖子页面
+        let uploadedImages = [];
+        let tags = [];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            const currentUser = Auth.currentUser;
+            if (!currentUser) {
+                alert('请先登录');
+                window.location.href = 'settings.html';
+                return;
+            }
+        });
+
+        // 处理图片上传
+        function handleImageUpload(input) {
+            const files = input.files;
+            if (!files || files.length === 0) return;
+
+            const remaining = 9 - uploadedImages.length;
+            const filesToUpload = Array.from(files).slice(0, remaining);
+
+            filesToUpload.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImages.push({
+                        data: e.target.result,
+                        name: file.name
+                    });
+                    renderImages();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            input.value = '';
+        }
+
+        // 渲染图片
+        function renderImages() {
+            const container = document.getElementById('image-upload-area');
+            container.innerHTML = '';
+
+            uploadedImages.forEach((img, index) => {
+                const item = document.createElement('div');
+                item.className = 'image-upload-item';
+                item.innerHTML = `
+                    <img src="${img.data}" alt="预览图${index + 1}">
+                    <button class="remove-btn" onclick="removeImage(${index})">×</button>
+                `;
+                container.appendChild(item);
+            });
+
+            if (uploadedImages.length < 9) {
+                const addBtn = document.createElement('div');
+                addBtn.className = 'add-image-btn';
+                addBtn.onclick = () => document.getElementById('image-input').click();
+                addBtn.innerHTML = `
+                    <div class="icon">+</div>
+                    <div class="text">添加图片</div>
+                `;
+                container.appendChild(addBtn);
+            }
+
+            document.getElementById('image-count').textContent = uploadedImages.length;
+        }
+
+        // 移除图片
+        function removeImage(index) {
+            uploadedImages.splice(index, 1);
+            renderImages();
+        }
+
+        // 处理标签输入
+        function handleTagInput(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const input = document.getElementById('tag-input');
+                const tag = input.value.trim();
+
+                if (tag && !tags.includes(tag) && tags.length < 5) {
+                    tags.push(tag);
+                    renderTags();
+                }
+
+                input.value = '';
+            }
+        }
+
+        // 渲染标签
+        function renderTags() {
+            const container = document.getElementById('tags-container');
+            container.innerHTML = '';
+
+            tags.forEach((tag, index) => {
+                const tagItem = document.createElement('div');
+                tagItem.className = 'tag-item';
+                tagItem.innerHTML = `
+                    ${tag}
+                    <span class="remove" onclick="removeTag(${index})">×</span>
+                `;
+                container.appendChild(tagItem);
+            });
+
+            if (tags.length < 5) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'tag-input';
+                input.id = 'tag-input';
+                input.placeholder = '输入标签后按回车添加';
+                input.onkeypress = handleTagInput;
+                container.appendChild(input);
+            }
+        }
+
+        // 移除标签
+        function removeTag(index) {
+            tags.splice(index, 1);
+            renderTags();
+        }
+
+        // 更新字数统计
+        function updateCharCount() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+
+            document.getElementById('title-count').textContent = title.length;
+            document.getElementById('content-count').textContent = content.length;
+        }
+
+        // 发布帖子
+        async function publishPost() {
+            const currentUser = Auth.currentUser;
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+
+            const title = document.getElementById('post-title').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+
+            // 验证
+            if (!title) {
+                alert('请输入标题');
+                document.getElementById('post-title').focus();
+                return;
+            }
+
+            if (!content) {
+                alert('请输入内容');
+                document.getElementById('post-content').focus();
+                return;
+            }
+
+            if (title.length > 50) {
+                alert('标题不能超过50字');
+                return;
+            }
+
+            // 显示加载状态
+            document.getElementById('loading-overlay').classList.add('show');
+            document.getElementById('publish-btn').disabled = true;
+
+            try {
+                // 如果有图片，先上传图片
+                const imageUrls = [];
+                for (const img of uploadedImages) {
+                    // 将 base64 转为 Blob
+                    const blob = await (await fetch(img.data)).blob();
+                    const formData = new FormData();
+                    formData.append('image', blob, img.name);
+
+                    // 上传图片
+                    const response = await fetch('/api/upload/image', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        imageUrls.push(result.url);
+                    }
+                }
+
+                // 创建帖子
+                const postData = {
+                    title: title,
+                    content: content,
+                    authorId: currentUser.id,
+                    images: imageUrls,
+                    tags: tags
+                };
+
+                const response = await fetch('/api/posts/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('发布成功！');
+                    window.location.href = 'post-detail.html?id=' + result.post.id;
+                } else {
+                    alert('发布失败：' + (result.error || '未知错误'));
+                }
+            } catch (error) {
+                console.error('发布错误:', error);
+                alert('发布失败，请稍后重试');
+            } finally {
+                // 隐藏加载状态
+                document.getElementById('loading-overlay').classList.remove('show');
+                document.getElementById('publish-btn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
