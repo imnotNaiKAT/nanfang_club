@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 用户主页</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content user-page">
+        <div class="user-profile">
+            <div class="user-header">
+                <img src="" alt="头像" class="user-profile-avatar" id="user-profile-avatar">
+                <div class="user-details">
+                    <h1 id="user-profile-name"></h1>
+                    <p class="user-grade" id="user-profile-grade"></p>
+                    <p class="user-bio" id="user-profile-bio"></p>
+                </div>
+            </div>
+            <div class="user-posts-section">
+                <h2>发布的帖子</h2>
+                <div class="user-posts-list" id="user-posts-list">
+                    <!-- 用户帖子将通过JS动态加载 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 加载用户信息
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = new URLSearchParams(window.location.search).get('id');
+            if (userId) {
+                loadUserProfile(userId);
+            }
+        });
+
+        function loadUserProfile(userId) {
+            const users = Storage.get('users') || [];
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                document.getElementById('user-profile-avatar').src = user.avatar || 'assets/images/default_avatar.png';
+                document.getElementById('user-profile-name').textContent = user.nickname;
+                document.getElementById('user-profile-grade').textContent = user.grade + '届';
+                document.getElementById('user-profile-bio').textContent = user.bio || '暂无简介';
+                
+                // 加载用户帖子
+                const posts = Storage.get('posts') || [];
+                const userPosts = posts.filter(p => p.authorId === userId);
+                const listEl = document.getElementById('user-posts-list');
+                listEl.innerHTML = '';
+                
+                userPosts.forEach(post => {
+                    const postEl = document.createElement('div');
+                    postEl.className = 'user-post-item';
+                    postEl.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.content.substring(0, 100)}...</p>
+                        <span class="post-date">${new Date(post.createdAt).toLocaleDateString()}</span>
+                    `;
+                    postEl.onclick = () => window.location.href = `post-detail.html?id=${post.id}`;
+                    listEl.appendChild(postEl);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

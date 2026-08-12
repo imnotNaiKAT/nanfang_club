@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 主页</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link active">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 欢迎区域 -->
+        <section class="welcome-section">
+            <h1 class="welcome-title">欢迎，<span id="welcome-username">访客</span></h1>
+        </section>
+
+        <!-- 轮播图区域 -->
+        <section class="carousel-section">
+            <div class="carousel-container">
+                <button class="carousel-btn prev" onclick="prevSlide()">&#10094;</button>
+                <div class="carousel-wrapper">
+                    <div class="carousel-slides" id="carousel-slides">
+                        <!-- 轮播图片将通过JS动态加载 -->
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="nextSlide()">&#10095;</button>
+            </div>
+            <div class="carousel-dots" id="carousel-dots"></div>
+        </section>
+
+        <!-- 分区内容 -->
+        <section class="sections-area" id="sections-area">
+            <!-- 公告分区 -->
+            <div class="section-block" data-section="announcements">
+                <div class="section-header">
+                    <h2>公告</h2>
+                </div>
+                <div class="section-content">
+                    <div class="banner-list" id="announcements-list">
+                        <!-- 公告列表将通过JS动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 活动分区 -->
+            <div class="section-block" data-section="activities">
+                <div class="section-header">
+                    <h2>活动</h2>
+                </div>
+                <div class="section-content">
+                    <div class="banner-list" id="activities-list">
+                        <!-- 活动列表将通过JS动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 更多分区可通过管理员模式添加 -->
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 搜索</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content search-page">
+        <!-- 搜索框区域 -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="search-input" class="search-main-input" placeholder="键入以搜索......">
+                <button class="search-main-btn" onclick="performSearch()">搜索</button>
+            </div>
+            <div class="search-options">
+                <label><input type="checkbox" id="use-regex"> 使用正则表达式</label>
+                <label><input type="checkbox" id="fuzzy-search" checked> 模糊匹配</label>
+            </div>
+        </section>
+
+        <!-- 搜索结果 -->
+        <section class="search-results" id="search-results" style="display:none;">
+            <h2>搜索结果</h2>
+            <div class="results-list" id="results-list">
+                <!-- 搜索结果将通过JS动态加载 -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

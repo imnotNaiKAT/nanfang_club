@@ -1,0 +1,17 @@
+{
+  "name": "nanfang-club-server",
+  "version": "1.0.0",
+  "description": "楠芳·俱乐部 - 株洲市南方中学社区平台后端服务",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "school",
+    "community",
+    "forum"
+  ],
+  "author": "楠芳·俱乐部",
+  "license": "MIT"
+}

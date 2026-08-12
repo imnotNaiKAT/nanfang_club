@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 关于</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link active">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content about-page">
+        <div class="about-container">
+            <h1>关于楠芳·俱乐部</h1>
+            <section class="about-section">
+                <h2>简介</h2>
+                <p>楠芳·俱乐部是株洲市南方中学的官方社区平台，为师生提供一个分享、交流、互动的在线空间。</p>
+            </section>
+            <section class="about-section">
+                <h2>功能特点</h2>
+                <ul>
+                    <li>发布和浏览帖子</li>
+                    <li>参与活动讨论</li>
+                    <li>查看学校公告</li>
+                    <li>个性化设置</li>
+                </ul>
+            </section>
+            <section class="about-section">
+                <h2>联系我们</h2>
+                <p>如有问题或建议，请通过管理员反馈。</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

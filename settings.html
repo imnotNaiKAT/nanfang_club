@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 设置</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link active">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content settings-page">
+        <div class="settings-container">
+            <!-- 左侧菜单 -->
+            <aside class="settings-sidebar">
+                <ul class="settings-menu">
+                    <li class="active" onclick="showSettingsTab('account')">账号</li>
+                    <li onclick="showSettingsTab('preferences')">设置</li>
+                    <li class="admin-entry" onclick="showAdminPrompt()">管理员模式</li>
+                </ul>
+            </aside>
+
+            <!-- 右侧内容 -->
+            <div class="settings-content">
+                <!-- 账号面板 -->
+                <div class="settings-tab" id="account-tab">
+                    <!-- 未登录时显示 -->
+                    <div class="auth-section" id="auth-section">
+                        <div class="auth-tabs">
+                            <button class="auth-tab active" onclick="switchAuthTab('login')">登录</button>
+                            <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
+                        </div>
+
+                        <!-- 登录表单 -->
+                        <form class="auth-form" id="login-form">
+                            <div class="form-group">
+                                <label for="login-qq">QQ号</label>
+                                <input type="text" id="login-qq" placeholder="请输入QQ号" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="login-password">密码</label>
+                                <input type="password" id="login-password" placeholder="请输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">登录</button>
+                        </form>
+
+                        <!-- 注册表单 -->
+                        <form class="auth-form" id="register-form" style="display:none;">
+                            <div class="form-group">
+                                <label for="reg-qq">QQ号</label>
+                                <input type="text" id="reg-qq" placeholder="请输入QQ号（用于账号唯一标识）" required>
+                                <small>QQ号仅用于判断账号是否重复</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-nickname">昵称</label>
+                                <input type="text" id="reg-nickname" placeholder="请输入昵称" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-grade">届数</label>
+                                <select id="reg-grade" required>
+                                    <option value="">请选择届数</option>
+                                    <!-- 将通过JS动态生成 -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-password">密码</label>
+                                <input type="password" id="reg-password" placeholder="请输入密码" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reg-confirm-password">确认密码</label>
+                                <input type="password" id="reg-confirm-password" placeholder="请再次输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">注册</button>
+                        </form>
+                    </div>
+
+                    <!-- 已登录时显示 -->
+                    <div class="profile-section" id="profile-section" style="display:none;">
+                        <div class="profile-header">
+                            <img src="" alt="头像" class="profile-avatar" id="profile-avatar">
+                            <div class="profile-info">
+                                <h2 id="profile-nickname"></h2>
+                                <p id="profile-qq"></p>
+                                <p id="profile-grade"></p>
+                            </div>
+                        </div>
+                        <div class="profile-edit">
+                            <div class="form-group">
+                                <label for="edit-nickname">昵称</label>
+                                <input type="text" id="edit-nickname">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-gender">性别</label>
+                                <select id="edit-gender">
+                                    <option value="">未设置</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-avatar">头像</label>
+                                <input type="file" id="edit-avatar" accept="image/*">
+                                <div class="avatar-preview" id="avatar-preview"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-bio">简介</label>
+                                <textarea id="edit-bio" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-password">修改密码</label>
+                                <input type="password" id="edit-password" placeholder="留空则不修改">
+                            </div>
+                            <button class="btn btn-primary" onclick="updateProfile()">保存修改</button>
+                            <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设置面板 -->
+                <div class="settings-tab" id="preferences-tab" style="display:none;">
+                    <h2>偏好设置</h2>
+                    <div class="preference-item">
+                        <label>主题模式</label>
+                        <select id="theme-select" onchange="changeTheme(this.value)">
+                            <option value="light">浅色模式</option>
+                            <option value="dark">深色模式</option>
+                            <option value="auto">跟随系统</option>
+                        </select>
+                    </div>
+                    <div class="preference-item">
+                        <label>字体大小</label>
+                        <select id="font-size" onchange="changeFontSize(this.value)">
+                            <option value="small">小</option>
+                            <option value="medium" selected>中</option>
+                            <option value="large">大</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 管理员面板 -->
+                <div class="settings-tab" id="admin-tab" style="display:none;">
+                    <h2>管理员控制台</h2>
+                    <div class="admin-section">
+                        <h3>轮播图管理</h3>
+                        <div class="form-group">
+                            <label>上传轮播图</label>
+                            <input type="file" id="admin-carousel-upload" accept="image/*" multiple>
+                            <button class="btn btn-primary" onclick="uploadCarouselImage()">上传</button>
+                        </div>
+                        <div class="carousel-list" id="admin-carousel-list"></div>
+                    </div>
+                    <div class="admin-section">
+                        <h3>分区管理</h3>
+                        <div class="form-group">
+                            <input type="text" id="new-section-name" placeholder="新分区名称">
+                            <button class="btn btn-primary" onclick="addSection()">添加分区</button>
+                        </div>
+                        <div class="sections-list" id="admin-sections-list"></div>
+                    </div>
+                    <div class="admin-section">
+                        <h3>帖子管理</h3>
+                        <div class="posts-admin-list" id="admin-posts-list"></div>
+                    </div>
+                    <div class="admin-section">
+                        <h3>公告/活动管理</h3>
+                        <div class="form-group">
+                            <input type="text" id="announcement-title" placeholder="标题">
+                            <textarea id="announcement-content" placeholder="内容"></textarea>
+                            <select id="announcement-type">
+                                <option value="announcement">公告</option>
+                                <option value="activity">活动</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="addAnnouncement()">添加</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 管理员密钥输入模态框 -->
+    <div class="modal" id="admin-key-modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>管理员验证</h2>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="admin-key">请输入管理员密钥</label>
+                    <input type="password" id="admin-key" placeholder="密钥">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAdminModal()">取消</button>
+                <button class="btn btn-primary" onclick="verifyAdminKey()">验证</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

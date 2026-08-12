@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>楠芳·俱乐部 - 帖子详情</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <img src="assets/images/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="index.html" class="nav-link">主页</a>
+                <a href="posts.html" class="nav-link">帖子</a>
+                <div class="search-box">
+                    <input type="text" id="quick-search" placeholder="键入以搜索......">
+                    <button onclick="quickSearch()">&#128269;</button>
+                </div>
+                <a href="settings.html" class="nav-link">设置</a>
+                <a href="about.html" class="nav-link">关于</a>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">&#9790;</button>
+                <div class="user-info" id="user-info" style="display:none;">
+                    <img src="" alt="头像" class="user-avatar" id="nav-avatar">
+                    <span id="nav-username"></span>
+                </div>
+                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-content post-detail-page">
+        <article class="post-detail">
+            <div class="post-header">
+                <h1 id="post-title"></h1>
+                <div class="post-meta">
+                    <div class="author-info" id="author-info">
+                        <img src="" alt="头像" class="author-avatar" id="author-avatar">
+                        <span class="author-name" id="author-name"></span>
+                    </div>
+                    <span class="post-date" id="post-date"></span>
+                </div>
+            </div>
+            <div class="post-content" id="post-content">
+                <!-- 帖子内容将通过JS加载 -->
+            </div>
+            <div class="post-images" id="post-images">
+                <!-- 帖子图片将通过JS加载 -->
+            </div>
+            <div class="post-files" id="post-files">
+                <!-- 帖子文件将通过JS加载 -->
+            </div>
+        </article>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 加载帖子详情
+        document.addEventListener('DOMContentLoaded', function() {
+            const postId = new URLSearchParams(window.location.search).get('id');
+            if (postId) {
+                loadPostDetail(postId);
+            }
+        });
+
+        function loadPostDetail(postId) {
+            const posts = Storage.get('posts') || [];
+            const post = posts.find(p => p.id === postId);
+            
+            if (post) {
+                document.getElementById('post-title').textContent = post.title;
+                document.getElementById('post-date').textContent = new Date(post.createdAt).toLocaleString();
+                
+                // 渲染Markdown内容
+                const contentEl = document.getElementById('post-content');
+                contentEl.innerHTML = renderMarkdown(post.content);
+                
+                // 加载作者信息
+                const users = Storage.get('users') || [];
+                const author = users.find(u => u.id === post.authorId);
+                if (author) {
+                    const avatarEl = document.getElementById('author-avatar');
+                    avatarEl.src = author.avatar || 'assets/images/default_avatar.png';
+                    avatarEl.onclick = () => window.location.href = `user.html?id=${author.id}`;
+                    document.getElementById('author-name').textContent = author.nickname;
+                    document.getElementById('author-name').onclick = () => window.location.href = `user.html?id=${author.id}`;
+                }
+                
+                // 加载图片
+                if (post.images && post.images.length > 0) {
+                    const imagesEl = document.getElementById('post-images');
+                    imagesEl.innerHTML = post.images.map(img => `<img src="${img}" alt="帖子图片">`).join('');
+                }
+                
+                // 加载文件
+                if (post.files && post.files.length > 0) {
+                    const filesEl = document.getElementById('post-files');
+                    filesEl.innerHTML = '<h3>附件</h3>' + post.files.map(file => 
+                        `<a href="${file.url}" download>${file.name}</a>`
+                    ).join('');
+                }
+            }
+        }
+
+        function renderMarkdown(text) {
+            // 简单的Markdown渲染
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`(.+?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>
