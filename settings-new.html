@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 楠芳·俱乐部</title>
+    <meta name="theme-color" content="#2563eb">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <style>
+        /* 设置页面 - 全新设计 */
+        .settings-page {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        .settings-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            min-height: calc(100vh - 200px);
+        }
+
+        @media (max-width: 900px) {
+            .settings-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 左侧菜单 */
+        .settings-sidebar {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 24px 0;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .settings-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .settings-menu li {
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-menu li:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .settings-menu li.active {
+            background: var(--primary-color);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+
+        .settings-menu li .icon {
+            font-size: 20px;
+        }
+
+        /* 右侧内容区 */
+        .settings-content {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .settings-tab {
+            display: none;
+        }
+
+        .settings-tab.active {
+            display: block;
+        }
+
+        /* 标题 */
+        .tab-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 15px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            color: var(--text-tertiary);
+            font-size: 13px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 32px;
+            border-radius: 12px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* 登录/注册切换 */
+        .auth-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 用户信息卡片 */
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 32px;
+        }
+
+        .user-card-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+        }
+
+        .user-card-info h2 {
+            margin: 0 0 8px;
+            font-size: 20px;
+        }
+
+        .user-card-info p {
+            margin: 4px 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        /* 头像预览 */
+        .avatar-upload {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar-preview-img {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        /* 管理员面板 */
+        .admin-panel {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+        }
+
+        .admin-panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-section {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+        }
+
+        .admin-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 轮播图管理 */
+        .carousel-manager {
+            display: grid;
+            gap: 16px;
+        }
+
+        .carousel-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .carousel-item img {
+            width: 120px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* 板块管理 */
+        .section-manager {
+            display: grid;
+            gap: 12px;
+        }
+
+        .section-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        /* 标签 */
+        .tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag-success {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .tag-warning {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .tag-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        /* 提示框 */
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* 密码输入提示 */
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s;
+        }
+
+        /* 设置项 */
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-weight: 500;
+        }
+
+        .setting-description {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* 开关 */
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .switch input:checked + .switch-slider {
+            background-color: var(--primary-color);
+        }
+
+        .switch input:checked + .switch-slider:before {
+            transform: translateX(22px);
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .settings-page {
+                margin-top: 70px;
+                padding: 0 12px;
+            }
+
+            .settings-container {
+                gap: 16px;
+            }
+
+            .settings-sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .settings-content {
+                padding: 20px;
+            }
+
+            .user-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .avatar-upload {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-area">
+                    <span class="site-name">楠芳·俱乐部</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                <a href="index.html" class="nav-link">返回主页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="settings-page">
+        <div class="settings-container">
+            <!-- 左侧菜单 -->
+            <aside class="settings-sidebar">
+                <ul class="settings-menu">
+                    <li class="active" data-tab="account" onclick="switchTab('account')">
+                        <span class="icon">👤</span>
+                        <span>账号管理</span>
+                    </li>
+                    <li data-tab="preferences" onclick="switchTab('preferences')">
+                        <span class="icon">⚙️</span>
+                        <span>系统设置</span>
+                    </li>
+                    <li data-tab="privacy" onclick="switchTab('privacy')">
+                        <span class="icon">🔒</span>
+                        <span>隐私与安全</span>
+                    </li>
+                    <li data-tab="admin" onclick="switchTab('admin')">
+                        <span class="icon">👑</span>
+                        <span>管理员面板</span>
+                    </li>
+                    <li data-tab="about" onclick="switchTab('about')">
+                        <span class="icon">ℹ️</span>
+                        <span>关于我们</span>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- 右侧内容 -->
+            <div class="settings-content">
+                <!-- 账号管理 -->
+                <div class="settings-tab active" id="account-tab">
+                    <h1 class="tab-title">账号管理</h1>
+
+                    <!-- 未登录状态 -->
+                    <div id="auth-section">
+                        <div class="auth-tabs">
+                            <button class="auth-tab active" onclick="switchAuthTab('login')">登录</button>
+                            <button class="auth-tab" onclick="switchAuthTab('register')">注册</button>
+                        </div>
+
+                        <!-- 登录表单 -->
+                        <form id="login-form" onsubmit="handleLogin(event)">
+                            <div class="form-group">
+                                <label>QQ号</label>
+                                <input type="text" id="login-qq" placeholder="请输入您的QQ号" required>
+                            </div>
+                            <div class="form-group">
+                                <label>密码</label>
+                                <input type="password" id="login-password" placeholder="请输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">登录</button>
+                        </form>
+
+                        <!-- 注册表单 -->
+                        <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
+                            <div class="form-group">
+                                <label>QQ号</label>
+                                <input type="text" id="reg-qq" placeholder="用于账号唯一标识" required>
+                                <small>仅用于判断账号是否重复，不会公开显示</small>
+                            </div>
+                            <div class="form-group">
+                                <label>昵称 *</label>
+                                <input type="text" id="reg-nickname" placeholder="您在社区的显示名称" required>
+                            </div>
+                            <div class="form-group">
+                                <label>届数 *</label>
+                                <select id="reg-grade" required>
+                                    <option value="">请选择您的届数</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>密码 *</label>
+                                <input type="password" id="reg-password" placeholder="设置您的登录密码" required>
+                            </div>
+                            <div class="form-group">
+                                <label>确认密码 *</label>
+                                <input type="password" id="reg-confirm-password" placeholder="请再次输入密码" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">注册</button>
+                        </form>
+                    </div>
+
+                    <!-- 已登录状态 -->
+                    <div id="profile-section" style="display: none;">
+                        <div class="user-card">
+                            <img src="" alt="头像" class="user-card-avatar" id="user-avatar">
+                            <div class="user-card-info">
+                                <h2 id="user-nickname"></h2>
+                                <p id="user-qq"></p>
+                                <p id="user-grade"></p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>修改头像</label>
+                            <div class="avatar-upload">
+                                <img src="" alt="头像预览" class="avatar-preview-img" id="avatar-preview">
+                                <input type="file" id="edit-avatar" accept="image/*" onchange="previewAvatar(this)">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>昵称</label>
+                            <input type="text" id="edit-nickname">
+                        </div>
+
+                        <div class="form-group">
+                            <label>性别</label>
+                            <select id="edit-gender">
+                                <option value="">未设置</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>个人简介</label>
+                            <textarea id="edit-bio" rows="3" placeholder="介绍一下自己吧~"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>修改密码（留空则不修改）</label>
+                            <input type="password" id="edit-password" placeholder="输入新密码">
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-primary" onclick="updateProfile()">保存修改</button>
+                            <button class="btn btn-secondary" onclick="logout()">退出登录</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统设置 -->
+                <div class="settings-tab" id="preferences-tab">
+                    <h1 class="tab-title">系统设置</h1>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">深色模式</div>
+                            <div class="setting-description">切换深色/浅色主题</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">消息通知</div>
+                            <div class="setting-description">接收点赞、评论、关注等通知</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked id="notification-toggle">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">自动播放视频</div>
+                            <div class="setting-description">在帖子详情页自动播放视频</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="autoplay-toggle">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">每页显示帖子数</div>
+                            <div class="setting-description">调整帖子列表每页显示的数量</div>
+                        </div>
+                        <select id="posts-per-page" style="width: 100px; padding: 8px;">
+                            <option value="10">10条</option>
+                            <option value="20" selected>20条</option>
+                            <option value="30">30条</option>
+                            <option value="50">50条</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 隐私与安全 -->
+                <div class="settings-tab" id="privacy-tab">
+                    <h1 class="tab-title">隐私与安全</h1>
+
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <div>我们重视您的隐私安全，所有数据均存储在本地服务器。</div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">公开个人主页</div>
+                            <div class="setting-description">允许其他用户查看您的个人主页</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked id="public-profile">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div>
+                            <div class="setting-label">显示在线状态</div>
+                            <div class="setting-description">向其他用户显示您的在线状态</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="show-online">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 32px;">
+                        <button class="btn btn-danger" onclick="deleteAccount()">注销账号</button>
+                        <p style="color: var(--text-tertiary); font-size: 14px; margin-top: 8px;">
+                            注销后所有数据将无法恢复
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 管理员面板 -->
+                <div class="settings-tab" id="admin-tab">
+                    <h1 class="tab-title">管理员面板</h1>
+
+                    <!-- 未验证状态 -->
+                    <div id="admin-login-section">
+                        <div class="alert alert-warning">
+                            <span>⚠️</span>
+                            <div>请输入管理员密钥以访问管理功能</div>
+                        </div>
+                        <div class="form-group">
+                            <label>管理员密钥</label>
+                            <input type="password" id="admin-key" placeholder="请输入管理员密钥">
+                        </div>
+                        <button class="btn btn-primary" onclick="verifyAdmin()">验证</button>
+                    </div>
+
+                    <!-- 已验证状态 -->
+                    <div id="admin-panel" style="display: none;">
+                        <div class="admin-panel">
+                            <div class="admin-panel-title">
+                                <span>📊</span>
+                                <span>数据统计</span>
+                            </div>
+
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-number" id="stat-users">0</div>
+                                    <div class="stat-label">注册用户</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="stat-posts">0</div>
+                                    <div class="stat-label">帖子总数</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="stat-comments">0</div>
+                                    <div class="stat-label">评论总数</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number" id="stat-images">0</div>
+                                    <div class="stat-label">图片总数</div>
+                                </div>
+                            </div>
+
+                            <!-- 轮播图管理 -->
+                            <div class="admin-section">
+                                <div class="admin-section-title">🖼️ 轮播图管理</div>
+                                <div class="carousel-manager" id="carousel-manager">
+                                    <!-- 将通过JS加载 -->
+                                </div>
+                                <div style="margin-top: 16px;">
+                                    <input type="file" id="carousel-image" accept="image/*" style="margin-bottom: 12px;">
+                                    <input type="text" id="carousel-title" placeholder="轮播图标题" style="margin-bottom: 12px;">
+                                    <input type="text" id="carousel-link" placeholder="跳转链接（可选）" style="margin-bottom: 12px;">
+                                    <button class="btn btn-primary" onclick="addCarouselImage()">添加轮播图</button>
+                                </div>
+                            </div>
+
+                            <!-- 板块管理 -->
+                            <div class="admin-section">
+                                <div class="admin-section-title">📂 板块管理</div>
+                                <div class="section-manager" id="section-manager">
+                                    <!-- 将通过JS加载 -->
+                                </div>
+                                <div style="margin-top: 16px;">
+                                    <input type="text" id="new-section-name" placeholder="新板块名称" style="margin-bottom: 12px;">
+                                    <button class="btn btn-primary" onclick="addSection()">添加板块</button>
+                                </div>
+                            </div>
+
+                            <!-- 帖子管理 -->
+                            <div class="admin-section">
+                                <div class="admin-section-title">📝 帖子管理</div>
+                                <div id="posts-manager">
+                                    <!-- 将通过JS加载 -->
+                                </div>
+                            </div>
+
+                            <!-- 用户管理 -->
+                            <div class="admin-section">
+                                <div class="admin-section-title">👥 用户管理</div>
+                                <div id="users-manager">
+                                    <!-- 将通过JS加载 -->
+                                </div>
+                            </div>
+
+                            <!-- 系统设置 -->
+                            <div class="admin-section">
+                                <div class="admin-section-title">⚙️ 系统设置</div>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
+                                    <button class="btn btn-secondary" onclick="importData()">导入数据</button>
+                                    <button class="btn btn-danger" onclick="clearCache()">清除缓存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关于我们 -->
+                <div class="settings-tab" id="about-tab">
+                    <h1 class="tab-title">关于我们</h1>
+
+                    <div style="max-width: 600px;">
+                        <h3>楠芳·俱乐部</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+                            株洲市南方中学社区平台
+                        </p>
+
+                        <div style="margin-bottom: 32px;">
+                            <h4 style="margin-bottom: 12px;">版本信息</h4>
+                            <p style="color: var(--text-tertiary);">v2.0.0 - 2024</p>
+                        </div>
+
+                        <div style="margin-bottom: 32px;">
+                            <h4 style="margin-bottom: 12px;">功能特性</h4>
+                            <ul style="color: var(--text-secondary); line-height: 1.8;">
+                                <li>用户注册与登录</li>
+                                <li>发布帖子和图片</li>
+                                <li>评论和互动</li>
+                                <li>消息通知系统</li>
+                                <li>深色模式支持</li>
+                                <li>移动端完美适配</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-bottom: 32px;">
+                            <h4 style="margin-bottom: 12px;">技术栈</h4>
+                            <p style="color: var(--text-tertiary);">
+                                HTML5 + CSS3 + JavaScript + Node.js
+                            </p>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <span>📧</span>
+                            <div>如有问题或建议，请联系管理员</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            initSettings();
+            initGradeOptions();
+            checkLoginStatus();
+            loadUserSettings();
+        });
+
+        // 初始化设置
+        function initSettings() {
+            // 检查深色模式
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            document.getElementById('dark-mode-toggle').checked = darkMode;
+        }
+
+        // 初始化年级选项
+        function initGradeOptions() {
+            const select = document.getElementById('reg-grade');
+            const currentYear = new Date().getFullYear();
+
+            for (let year = currentYear + 3; year >= 2000; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year + '届';
+                select.appendChild(option);
+            }
+        }
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const user = JSON.parse(currentUser);
+                showLoggedInState(user);
+            }
+        }
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 更新菜单
+            document.querySelectorAll('.settings-menu li').forEach(li => {
+                li.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+            // 更新内容
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // 切换登录/注册表单
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (tab === 'login') {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('register-form').style.display = 'none';
+            } else {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('register-form').style.display = 'block';
+            }
+        }
+
+        // 处理登录
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const qq = document.getElementById('login-qq').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // 从本地存储获取用户
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.qq === qq && u.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                alert('登录成功！');
+                showLoggedInState(user);
+            } else {
+                alert('QQ号或密码错误');
+            }
+        }
+
+        // 处理注册
+        function handleRegister(event) {
+            event.preventDefault();
+
+            const qq = document.getElementById('reg-qq').value.trim();
+            const nickname = document.getElementById('reg-nickname').value.trim();
+            const grade = document.getElementById('reg-grade').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+            // 验证
+            if (!qq || !nickname || !grade || !password) {
+                alert('请填写完整信息');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('密码长度至少6位');
+                return;
+            }
+
+            // 检查QQ是否已注册
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.qq === qq)) {
+                alert('该QQ号已注册');
+                return;
+            }
+
+            // 创建用户
+            const newUser = {
+                id: 'user_' + Date.now(),
+                qq: qq,
+                nickname: nickname,
+                grade: grade,
+                password: password,
+                gender: '',
+                avatar: '',
+                bio: '',
+                following: [],
+                followers: [],
+                collections: [],
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+            alert('注册成功！');
+            showLoggedInState(newUser);
+        }
+
+        // 显示已登录状态
+        function showLoggedInState(user) {
+            document.getElementById('auth-section').style.display = 'none';
+            document.getElementById('profile-section').style.display = 'block';
+
+            // 填充用户信息
+            const avatar = user.avatar || CONFIG.DEFAULT_AVATAR;
+            document.getElementById('user-avatar').src = avatar;
+            document.getElementById('avatar-preview').src = avatar;
+            document.getElementById('user-nickname').textContent = user.nickname;
+            document.getElementById('user-qq').textContent = 'QQ: ' + user.qq;
+            document.getElementById('user-grade').textContent = user.grade + '届';
+
+            // 填充编辑表单
+            document.getElementById('edit-nickname').value = user.nickname;
+            document.getElementById('edit-gender').value = user.gender || '';
+            document.getElementById('edit-bio').value = user.bio || '';
+        }
+
+        // 预览头像
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 更新个人信息
+        function updateProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const nickname = document.getElementById('edit-nickname').value.trim();
+            const gender = document.getElementById('edit-gender').value;
+            const bio = document.getElementById('edit-bio').value.trim();
+            const password = document.getElementById('edit-password').value;
+
+            if (!nickname) {
+                alert('昵称不能为空');
+                return;
+            }
+
+            // 更新本地存储
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+
+            if (userIndex !== -1) {
+                users[userIndex].nickname = nickname;
+                users[userIndex].gender = gender;
+                users[userIndex].bio = bio;
+                if (password) {
+                    users[userIndex].password = password;
+                }
+
+                // 处理头像
+                const avatarPreview = document.getElementById('avatar-preview').src;
+                if (avatarPreview && avatarPreview !== CONFIG.DEFAULT_AVATAR) {
+                    users[userIndex].avatar = avatarPreview;
+                }
+
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+
+                alert('保存成功！');
+                showLoggedInState(users[userIndex]);
+            }
+        }
+
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('currentUser');
+                document.getElementById('auth-section').style.display = 'block';
+                document.getElementById('profile-section').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('register-form').style.display = 'none';
+
+                // 清空表单
+                document.getElementById('login-qq').value = '';
+                document.getElementById('login-password').value = '';
+            }
+        }
+
+        // 切换深色模式
+        function toggleDarkMode() {
+            const isDark = document.getElementById('dark-mode-toggle').checked;
+            localStorage.setItem('darkMode', isDark);
+
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        // 加载用户设置
+        function loadUserSettings() {
+            // 这里可以加载更多用户个性化设置
+        }
+
+        // 验证管理员
+        function verifyAdmin() {
+            const key = document.getElementById('admin-key').value;
+
+            if (key === CONFIG.ADMIN_KEY) {
+                document.getElementById('admin-login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                loadAdminData();
+            } else {
+                alert('管理员密钥错误');
+            }
+        }
+
+        // 加载管理员数据
+        function loadAdminData() {
+            // 加载统计数据
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+
+            document.getElementById('stat-users').textContent = users.length;
+            document.getElementById('stat-posts').textContent = posts.length;
+
+            let totalComments = 0;
+            posts.forEach(post => {
+                totalComments += (post.comments || []).length;
+            });
+            document.getElementById('stat-comments').textContent = totalComments;
+
+            // 加载轮播图
+            loadCarouselImages();
+
+            // 加载板块
+            loadSections();
+
+            // 加载帖子列表
+            loadPostsManager();
+        }
+
+        // 加载轮播图
+        function loadCarouselImages() {
+            const carouselImages = JSON.parse(localStorage.getItem('carouselImages') || '[]');
+            const container = document.getElementById('carousel-manager');
+
+            if (carouselImages.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-tertiary);">暂无轮播图</p>';
+                return;
+            }
+
+            container.innerHTML = carouselImages.map((img, index) => `
+                <div class="carousel-item">
+                    <img src="${img.url}" alt="${img.title}">
+                    <div>
+                        <div style="font-weight: 600;">${img.title}</div>
+                        <div style="color: var(--text-tertiary); font-size: 12px;">${img.link || '无跳转链接'}</div>
+                    </div>
+                    <button class="btn btn-danger" onclick="removeCarouselImage(${index})" style="margin-left: auto;">删除</button>
+                </div>
+            `).join('');
+        }
+
+        // 添加轮播图
+        function addCarouselImage() {
+            const fileInput = document.getElementById('carousel-image');
+            const title = document.getElementById('carousel-title').value.trim();
+            const link = document.getElementById('carousel-link').value.trim();
+
+            if (!fileInput.files[0] || !title) {
+                alert('请选择图片并填写标题');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const carouselImages = JSON.parse(localStorage.getItem('carouselImages') || '[]');
+                carouselImages.push({
+                    url: e.target.result,
+                    title: title,
+                    link: link
+                });
+                localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
+                loadCarouselImages();
+
+                // 清空输入
+                fileInput.value = '';
+                document.getElementById('carousel-title').value = '';
+                document.getElementById('carousel-link').value = '';
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+
+        // 删除轮播图
+        function removeCarouselImage(index) {
+            const carouselImages = JSON.parse(localStorage.getItem('carouselImages') || '[]');
+            carouselImages.splice(index, 1);
+            localStorage.setItem('carouselImages', JSON.stringify(carouselImages));
+            loadCarouselImages();
+        }
+
+        // 加载板块
+        function loadSections() {
+            const sections = JSON.parse(localStorage.getItem('sections') || '["announcements", "activities"]');
+            const sectionNames = {
+                'announcements': '公告',
+                'activities': '活动'
+            };
+
+            const container = document.getElementById('section-manager');
+            container.innerHTML = sections.map((section, index) => `
+                <div class="section-item">
+                    <span>${sectionNames[section] || section}</span>
+                    ${index > 1 ? `<button class="btn btn-danger" onclick="removeSection(${index})">删除</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 添加板块
+        function addSection() {
+            const name = document.getElementById('new-section-name').value.trim();
+            if (!name) {
+                alert('请输入板块名称');
+                return;
+            }
+
+            const sections = JSON.parse(localStorage.getItem('sections') || '["announcements", "activities"]');
+            const sectionId = 'section_' + Date.now();
+
+            // 保存板块映射
+            const sectionNames = JSON.parse(localStorage.getItem('sectionNames') || '{}');
+            sectionNames[sectionId] = name;
+            localStorage.setItem('sectionNames', JSON.stringify(sectionNames));
+
+            sections.push(sectionId);
+            localStorage.setItem('sections', JSON.stringify(sections));
+
+            loadSections();
+            document.getElementById('new-section-name').value = '';
+            alert('板块添加成功！');
+        }
+
+        // 删除板块
+        function removeSection(index) {
+            const sections = JSON.parse(localStorage.getItem('sections') || '[]');
+            sections.splice(index, 1);
+            localStorage.setItem('sections', JSON.stringify(sections));
+            loadSections();
+        }
+
+        // 加载帖子管理
+        function loadPostsManager() {
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+            const container = document.getElementById('posts-manager');
+
+            if (posts.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-tertiary);">暂无帖子</p>';
+                return;
+            }
+
+            // 只显示最近20条
+            const recentPosts = posts.slice(0, 20);
+
+            container.innerHTML = recentPosts.map(post => {
+                const author = users.find(u => u.id === post.authorId);
+                return `
+                    <div class="section-item">
+                        <div>
+                            <div style="font-weight: 600;">${post.title}</div>
+                            <div style="color: var(--text-tertiary); font-size: 12px;">
+                                作者: ${author ? author.nickname : '未知'} | ${new Date(post.createdAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" onclick="deletePost('${post.id}')">删除</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 删除帖子
+        function deletePost(postId) {
+            if (!confirm('确定要删除这篇帖子吗？')) return;
+
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            const index = posts.findIndex(p => p.id === postId);
+
+            if (index !== -1) {
+                posts.splice(index, 1);
+                localStorage.setItem('posts', JSON.stringify(posts));
+                loadPostsManager();
+                alert('删除成功！');
+            }
+        }
+
+        // 导出数据
+        function exportData() {
+            const data = {
+                users: JSON.parse(localStorage.getItem('users') || '[]'),
+                posts: JSON.parse(localStorage.getItem('posts') || '[]'),
+                messages: JSON.parse(localStorage.getItem('messages') || '[]'),
+                carouselImages: JSON.parse(localStorage.getItem('carouselImages') || '[]'),
+                sections: JSON.parse(localStorage.getItem('sections') || '[]'),
+                sectionNames: JSON.parse(localStorage.getItem('sectionNames') || '{}')
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nanfang_club_data_' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+        }
+
+        // 导入数据
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+
+                        if (confirm('导入数据将覆盖现有数据，确定继续吗？')) {
+                            Object.keys(data).forEach(key => {
+                                localStorage.setItem(key, JSON.stringify(data[key]));
+                            });
+
+                            alert('导入成功！请刷新页面查看。');
+                            location.reload();
+                        }
+                    } catch (error) {
+                        alert('文件格式错误');
+                    }
+                };
+
+                reader.readAsText(file);
+            };
+
+            input.click();
+        }
+
+        // 清除缓存
+        function clearCache() {
+            if (confirm('清除缓存将删除所有数据，确定继续吗？')) {
+                localStorage.clear();
+                alert('缓存已清除，页面将刷新');
+                location.reload();
+            }
+        }
+
+        // 注销账号
+        function deleteAccount() {
+            if (!confirm('确定要注销账号吗？所有数据将无法恢复！')) return;
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            // 从用户列表中删除
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+
+            if (userIndex !== -1) {
+                users.splice(userIndex, 1);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            // 清除登录状态
+            localStorage.removeItem('currentUser');
+
+            alert('账号已注销');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
