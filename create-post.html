@@ -336,6 +336,14 @@
             <!-- 标题输入 -->
             <input type="text" class="title-input" id="post-title" placeholder="填写标题会有更多赞哦~" maxlength="50" oninput="updateCharCount()">
 
+            <!-- 板块选择 -->
+            <div class="section-section" style="margin-bottom:16px;">
+                <div class="section-label" style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:8px;">选择板块</div>
+                <select id="post-section" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--border-color);background-color:var(--bg-secondary);color:var(--text-primary);font-size:1rem;outline:none;">
+                    <option value="">默认</option>
+                </select>
+            </div>
+
             <!-- 内容输入 -->
             <textarea class="content-input" id="post-content" placeholder="分享你的生活点滴...支持Markdown格式" oninput="updateCharCount()"></textarea>
 
@@ -390,7 +398,25 @@
                 window.location.href = 'settings-new.html';
                 return;
             }
+            loadSections();
         });
+
+        async function loadSections() {
+            try {
+                const res = await API.sections.getAll();
+                if (res.success && res.sections) {
+                    const sel = document.getElementById('post-section');
+                    res.sections.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.name || s.id;
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load sections:', e);
+            }
+        }
 
         function handleImageUpload(input) {
             const files = input.files;
@@ -509,6 +535,7 @@
 
             const title = document.getElementById('post-title').value.trim();
             const content = document.getElementById('post-content').value.trim();
+            const section = document.getElementById('post-section').value;
 
             if (!title) { alert('请输入标题'); document.getElementById('post-title').focus(); return; }
             if (!content) { alert('请输入内容'); document.getElementById('post-content').focus(); return; }
@@ -532,7 +559,7 @@
                     }
                 }
 
-                const result = await API.posts.create(title, content, imageUrls, tags);
+                const result = await API.posts.create(title, content, imageUrls, tags, section);
 
                 if (result.success) {
                     alert('发布成功！');

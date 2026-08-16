@@ -130,12 +130,12 @@
 
                 return `
                     <div class="post-card" onclick="openPost('${post.id}')">
-                        ${coverImage ? `<img src="${coverImage}" alt="封面" class="post-card-image" loading="lazy">` : ''}
+                        ${coverImage ? `<img src="${coverImage}" alt="封面" class="post-card-image" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-image-placeholder" style="display:none;width:100%;aspect-ratio:4/3;background:var(--bg-tertiary);align-items:center;justify-content:center;color:var(--text-tertiary);font-size:1rem;">暂无图片</div>` : '<div class="no-image-placeholder" style="width:100%;aspect-ratio:4/3;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:1rem;">暂无图片</div>'}
                         <div class="post-card-content">
                             <div class="post-card-title">${escapeHtml(post.title)}</div>
                             <div class="post-card-footer">
                                 <div class="post-card-author" onclick="event.stopPropagation();openUser('${post.authorId}')">
-                                    <img src="${avatar}" alt="头像" class="post-card-avatar">
+                                    <img src="${avatar}" alt="头像" class="post-card-avatar" onerror="this.src='assets/images/default_avatar.png'">
                                     <span class="post-card-nickname">${escapeHtml(nickname)}</span>
                                 </div>
                                 <div class="post-card-stats">

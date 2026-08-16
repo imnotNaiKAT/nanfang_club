@@ -110,6 +110,7 @@
                 }
                 const user = userData.user;
                 document.getElementById('user-profile-avatar').src = user.avatar || 'assets/images/default_avatar.png';
+                document.getElementById('user-profile-avatar').onerror = function() { this.src = 'assets/images/default_avatar.png'; };
                 document.getElementById('user-profile-name').textContent = user.nickname || '未知用户';
                 document.getElementById('user-profile-grade').textContent = (user.grade || '') + '届';
                 document.getElementById('user-profile-bio').textContent = user.bio || '暂无简介';

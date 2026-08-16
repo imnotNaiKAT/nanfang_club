@@ -200,6 +200,7 @@
 
             const author = currentPost.author || {};
             document.getElementById('author-avatar').src = author.avatar || 'assets/images/default_avatar.png';
+            document.getElementById('author-avatar').onerror = function() { this.src = 'assets/images/default_avatar.png'; };
             document.getElementById('author-avatar').onclick = () => goToUser(currentPost.authorId);
             document.getElementById('author-name').textContent = author.nickname || '未知用户';
             document.getElementById('author-name').onclick = () => goToUser(currentPost.authorId);
@@ -245,6 +246,7 @@
                 imgEl.src = img;
                 imgEl.alt = '图片' + (index + 1);
                 imgEl.className = index === 0 ? 'active' : '';
+                imgEl.onerror = function() { this.style.display = 'none'; };
                 container.appendChild(imgEl);
             });
 
@@ -283,7 +285,7 @@
 
                 return `
                     <div class="comment-item">
-                        <img src="${avatar}" alt="头像" class="comment-avatar" onclick="goToUser('${comment.userId}')">
+                        <img src="${avatar}" alt="头像" class="comment-avatar" onclick="goToUser('${comment.userId}')" onerror="this.src='assets/images/default_avatar.png'">
                         <div class="comment-content">
                             <div class="comment-author" onclick="goToUser('${comment.userId}')">${escapeHtml(nickname)}</div>
                             <div class="comment-text">${escapeHtml(comment.content)}</div>

@@ -163,7 +163,7 @@
 
             return `
                 <div class="message-item ${msg.read ? '' : 'unread'}" onclick="openMessage('${msg.id}')">
-                    <img src="${senderAvatar}" alt="头像" class="message-avatar">
+                    <img src="${senderAvatar}" alt="头像" class="message-avatar" onerror="this.src='assets/images/default_avatar.png'">
                     <div class="message-content">
                         <div class="message-header">
                             <span class="message-sender">${escapeHtml(senderName)}</span>

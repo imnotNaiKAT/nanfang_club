@@ -91,7 +91,7 @@ const Mobile = {
         if (currentUser) {
             userSection = `
                 <div class="mobile-user-info">
-                    <img src="${currentUser.avatar || 'assets/images/default_avatar.png'}" alt="头像" class="user-avatar">
+                    <img src="${currentUser.avatar || 'assets/images/default_avatar.png'}" alt="头像" class="user-avatar" onerror="this.src='assets/images/default_avatar.png'">
                     <div class="user-name">${currentUser.nickname}</div>
                     <div class="user-grade">${currentUser.grade || ''}</div>
                 </div>
