@@ -29,7 +29,7 @@
                     <input type="text" id="quick-search" placeholder="键入以搜索......">
                     <button onclick="quickSearch()">&#128269;</button>
                 </div>
-                <a href="settings.html" class="nav-link">设置</a>
+                <a href="settings-new.html" class="nav-link">设置</a>
                 <a href="about.html" class="nav-link">关于</a>
             </div>
             <div class="nav-right">
@@ -38,7 +38,7 @@
                     <img src="" alt="头像" class="user-avatar" id="nav-avatar">
                     <span id="nav-username"></span>
                 </div>
-                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+                <a href="settings-new.html" class="nav-link" id="login-btn">登录/注册</a>
             </div>
         </div>
     </nav>
@@ -96,12 +96,27 @@
 
     <!-- 页脚 -->
     <footer class="footer">
-        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p>&copy; 2026 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p class="disclaimer">本网站为非官方个人网站，仅供校内学生使用</p>
     </footer>
 
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/auth.js"></script>
-    <script src="assets/js/mobile.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/mobile.js"></script>
+    <script>
+    (function() {
+        window.showToast = function(message, type) {
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + (type || '');
+            toast.textContent = message;
+            toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:8px;z-index:9999;background:var(--bg-secondary);color:var(--text-primary);box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; }, 2500);
+            setTimeout(function() { toast.remove(); }, 3000);
+        };
+    })();
+    </script>
 </body>
 </html>

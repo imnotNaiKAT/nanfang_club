@@ -29,7 +29,7 @@
                     <input type="text" id="quick-search" placeholder="键入以搜索......">
                     <button onclick="quickSearch()">&#128269;</button>
                 </div>
-                <a href="settings.html" class="nav-link">设置</a>
+                <a href="settings-new.html" class="nav-link">设置</a>
                 <a href="about.html" class="nav-link">关于</a>
             </div>
             <div class="nav-right">
@@ -38,7 +38,7 @@
                     <img src="" alt="头像" class="user-avatar" id="nav-avatar">
                     <span id="nav-username"></span>
                 </div>
-                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+                <a href="settings-new.html" class="nav-link" id="login-btn">登录/注册</a>
             </div>
         </div>
     </nav>
@@ -68,13 +68,23 @@
 
     <!-- 页脚 -->
     <footer class="footer">
-        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p>&copy; 2026 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p class="disclaimer">本网站为非官方个人网站，仅供校内学生使用</p>
     </footer>
 
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/mobile.js"></script>
     <script src="assets/js/search.js"></script>
     <script src="assets/js/app.js"></script>
+    <script>
+    function performSearch() {
+        var input = document.getElementById('search-input');
+        if (input && input.value.trim()) {
+            window.location.href = 'search.html?q=' + encodeURIComponent(input.value.trim());
+        }
+    }
+    </script>
 </body>
 </html>

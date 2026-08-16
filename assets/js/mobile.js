@@ -100,7 +100,7 @@ const Mobile = {
             userSection = `
                 <div class="mobile-user-logged-out">
                     <p>未登录</p>
-                    <a href="settings.html">去登录</a>
+                    <a href="settings-new.html">去登录</a>
                 </div>
             `;
         }
@@ -110,7 +110,7 @@ const Mobile = {
                 <a href="index.html" class="${currentPage === 'index.html' ? 'active' : ''}">主页</a>
                 <a href="posts.html" class="${currentPage === 'posts.html' ? 'active' : ''}">帖子</a>
                 <a href="search.html" class="${currentPage === 'search.html' ? 'active' : ''}">搜索</a>
-                <a href="settings.html" class="${currentPage === 'settings.html' ? 'active' : ''}">设置</a>
+                <a href="settings-new.html" class="${currentPage === 'settings-new.html' ? 'active' : ''}">设置</a>
                 <a href="about.html" class="${currentPage === 'about.html' ? 'active' : ''}">关于</a>
             </nav>
             <div class="mobile-search">
@@ -155,7 +155,7 @@ const Mobile = {
                 <span class="nav-icon">🔍</span>
                 <span>搜索</span>
             </a>
-            <a href="settings.html" class="mobile-bottom-nav-item ${currentPage === 'settings.html' ? 'active' : ''}">
+            <a href="settings-new.html" class="mobile-bottom-nav-item ${currentPage === 'settings-new.html' ? 'active' : ''}">
                 <span class="nav-icon">⚙️</span>
                 <span>设置</span>
             </a>
@@ -223,13 +223,13 @@ const Mobile = {
 
             // 主题
             if (themeToggle) {
-                const savedTheme = Storage.get('theme') || 'light';
+                const savedTheme = Storage.getTheme();
                 themeToggle.checked = savedTheme === 'dark';
             }
 
             // 字体大小
             if (fontSelect) {
-                const savedFontSize = Storage.get('fontSize') || 'medium';
+                const savedFontSize = Storage.getFontSize();
                 fontSelect.value = savedFontSize;
             }
 

@@ -1,201 +1,154 @@
-/* 楠芳·俱乐部 - 帖子模块 */
-
 const Posts = {
-    // 初始化
-    init: function() {
-        this.loadPosts();
+    allPosts: [],
+    currentPage: 1,
+    pageSize: 20,
+    currentSection: null,
+    currentAuthor: null,
+
+    async init() {
+        this.currentPage = 1;
+        await this.loadPosts();
+        this.setupFilters();
     },
 
-    // 加载帖子列表
-    loadPosts: function() {
-        const postsGrid = document.getElementById('posts-grid');
-        if (!postsGrid) return;
+    async loadPosts() {
+        try {
+            let url = '/api/posts?limit=100';
+            if (this.currentSection) url += '&section=' + encodeURIComponent(this.currentSection);
+            if (this.currentAuthor) url += '&authorId=' + this.currentAuthor;
 
-        const posts = Storage.get('posts') || [];
-        const users = Storage.get('users') || [];
+            const res = await API.get(url);
+            if (res.success) {
+                this.allPosts = res.posts || [];
+                this.renderPosts();
+            }
+        } catch (err) {
+            showToast('加载帖子失败', 'error');
+        }
+    },
 
-        postsGrid.innerHTML = '';
+    async loadPostsByAuthor(authorId) {
+        this.currentAuthor = authorId;
+        this.currentPage = 1;
+        await this.loadPosts();
+    },
+
+    async loadPostsBySection(section) {
+        this.currentSection = section;
+        this.currentPage = 1;
+        await this.loadPosts();
+    },
+
+    renderPosts() {
+        const grid = document.getElementById('posts-grid');
+        if (!grid) return;
+
+        let posts = this.allPosts;
+        if (this.currentSection) {
+            posts = posts.filter(p => (p.section || '').toLowerCase() === this.currentSection.toLowerCase());
+        }
+        if (this.currentAuthor) {
+            posts = posts.filter(p => p.authorId === this.currentAuthor);
+        }
 
         if (posts.length === 0) {
-            postsGrid.innerHTML = '<p class="no-posts">暂无帖子，快来发布第一篇吧！</p>';
+            grid.innerHTML = '<div class="empty-state">暂无帖子</div>';
             return;
         }
 
-        // 按时间倒序排列
-        const sortedPosts = posts.sort((a, b) => b.createdAt - a.createdAt);
+        const start = (this.currentPage - 1) * this.pageSize;
+        const pagePosts = posts.slice(start, start + this.pageSize);
 
-        sortedPosts.forEach(post => {
-            const author = users.find(u => u.id === post.authorId);
-            const card = this.createPostCard(post, author);
-            postsGrid.appendChild(card);
+        let html = '';
+        pagePosts.forEach(post => {
+            html += this.renderPostCard(post);
         });
+
+        grid.innerHTML = html;
+        this.renderPagination(posts.length);
     },
 
-    // 创建帖子卡片
-    createPostCard: function(post, author) {
-        const card = document.createElement('div');
-        card.className = 'post-card';
-        card.onclick = () => {
-            window.location.href = `post-detail.html?id=${post.id}`;
-        };
-
-        const excerpt = post.content.replace(/[#*`_\n]/g, '').substring(0, 100);
-        const imageHtml = post.images && post.images.length > 0 
-            ? `<img src="${post.images[0]}" alt="${post.title}" class="post-card-image">` 
+    renderPostCard(post) {
+        const imagesHtml = post.images && post.images.length > 0
+            ? `<div class="card-image"><img src="${post.images[0]}" alt="${post.title}" loading="lazy"></div>`
             : '';
 
-        card.innerHTML = `
-            ${imageHtml}
-            <div class="post-card-content">
-                <h3 class="post-card-title">${post.title}</h3>
-                <p class="post-card-excerpt">${excerpt}...</p>
-                <div class="post-card-footer">
-                    <img src="${author?.avatar || 'assets/images/default_avatar.png'}" alt="头像" class="post-card-avatar" onclick="event.stopPropagation(); goToUser('${post.authorId}')">
-                    <span class="post-card-author" onclick="event.stopPropagation(); goToUser('${post.authorId}')">${author?.nickname || '未知用户'}</span>
-                    <span class="post-card-date">${new Date(post.createdAt).toLocaleDateString()}</span>
+        const excerpt = post.content.replace(/[#*`>_~\-!]/g, '').replace(/\[.*?\]\(.*?\)/g, '').substring(0, 80);
+        const authorAvatar = post.author && post.author.avatar
+            ? post.author.avatar
+            : `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="#4A90D9"/><text x="20" y="24" text-anchor="middle" fill="white" font-size="16">' + (post.author?.nickname?.[0] || '?') + '</text></svg>')}`;
+
+        return `
+            <div class="post-card" onclick="window.location.href='post-detail.html?id=${post.id}'">
+                ${imagesHtml}
+                <div class="card-body">
+                    <h3 class="card-title">${post.title}</h3>
+                    <p class="card-excerpt">${excerpt}...</p>
+                    <div class="card-meta">
+                        <div class="card-author">
+                            <img src="${authorAvatar}" alt="avatar" class="author-avatar" onclick="event.stopPropagation(); window.location.href='user.html?id=${post.authorId}'">
+                            <span class="author-name">${post.author ? post.author.nickname : '匿名'}</span>
+                        </div>
+                        <div class="card-stats">
+                            <span class="stat-item">❤️ ${post.likes || 0}</span>
+                            <span class="stat-item">💬 ${post.comments ? post.comments.length : 0}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
-
-        return card;
     },
 
-    // 显示发帖模态框
-    showCreateModal: function() {
-        if (!Auth.currentUser) {
-            alert('请先登录');
-            window.location.href = 'settings.html';
-            return;
-        }
-        document.getElementById('create-post-modal').classList.add('show');
-    },
+    renderPagination(total) {
+        const container = document.getElementById('pagination');
+        if (!container) return;
 
-    // 关闭发帖模态框
-    closeCreateModal: function() {
-        document.getElementById('create-post-modal').classList.remove('show');
-        // 清空表单
-        document.getElementById('post-title').value = '';
-        document.getElementById('post-content').value = '';
-        document.getElementById('post-images').value = '';
-        document.getElementById('post-files').value = '';
-        document.getElementById('image-preview').innerHTML = '';
-    },
-
-    // 提交帖子
-    submitPost: function() {
-        const title = document.getElementById('post-title').value.trim();
-        const content = document.getElementById('post-content').value.trim();
-
-        if (!title || !content) {
-            alert('请填写标题和内容');
+        const totalPages = Math.ceil(total / this.pageSize);
+        if (totalPages <= 1) {
+            container.innerHTML = '';
             return;
         }
 
-        if (!Auth.currentUser) {
-            alert('请先登录');
-            return;
+        let html = '';
+        if (this.currentPage > 1) {
+            html += `<button class="page-btn" onclick="Posts.changePage(${this.currentPage - 1})">上一页</button>`;
         }
 
-        // 获取图片和文件
-        const imageFiles = document.getElementById('post-images').files;
-        const files = document.getElementById('post-files').files;
-
-        const post = {
-            id: Storage.generateId(),
-            title: title,
-            content: content,
-            authorId: Auth.currentUser.id,
-            images: [],
-            files: [],
-            createdAt: Date.now()
-        };
-
-        // 处理图片上传（转换为Base64）
-        const promises = [];
-        
-        for (let i = 0; i < imageFiles.length; i++) {
-            promises.push(this.fileToBase64(imageFiles[i]));
+        for (let i = 1; i <= totalPages; i++) {
+            html += `<button class="page-btn ${i === this.currentPage ? 'active' : ''}" onclick="Posts.changePage(${i})">${i}</button>`;
         }
 
-        Promise.all(promises).then(images => {
-            post.images = images;
+        if (this.currentPage < totalPages) {
+            html += `<button class="page-btn" onclick="Posts.changePage(${this.currentPage + 1})">下一页</button>`;
+        }
 
-            // 保存帖子
-            const posts = Storage.get('posts') || [];
-            posts.push(post);
-            Storage.set('posts', posts);
-
-            alert('发布成功！');
-            this.closeCreateModal();
-            this.loadPosts();
-        }).catch(err => {
-            console.error('上传失败:', err);
-            alert('上传失败，请重试');
-        });
+        container.innerHTML = html;
     },
 
-    // 文件转Base64
-    fileToBase64: function(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
+    changePage(page) {
+        this.currentPage = page;
+        this.renderPosts();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     },
 
-    // 删除帖子
-    deletePost: function(postId) {
-        if (!confirm('确定要删除这篇帖子吗？')) return;
+    setupFilters() {
+        const sectionFilter = document.getElementById('section-filter');
+        if (sectionFilter) {
+            sectionFilter.addEventListener('change', (e) => {
+                this.currentSection = e.target.value || null;
+                this.currentPage = 1;
+                this.renderPosts();
+            });
+        }
+    },
 
-        const posts = Storage.get('posts') || [];
-        const newPosts = posts.filter(p => p.id !== postId);
-        Storage.set('posts', posts);
-        alert('删除成功！');
-        this.loadPosts();
+    async deletePost(postId) {
+        if (!confirm('确定要删除这个帖子吗？')) return false;
+        try {
+            const res = await API.posts.delete(postId);
+            return res.success;
+        } catch (err) {
+            return false;
+        }
     }
 };
-
-// 显示发帖模态框
-function showCreatePostModal() {
-    Posts.showCreateModal();
-}
-
-// 关闭发帖模态框
-function closeCreatePostModal() {
-    Posts.closeCreateModal();
-}
-
-// 提交帖子
-function submitPost() {
-    Posts.submitPost();
-}
-
-// 跳转到用户主页
-function goToUser(userId) {
-    window.location.href = `user.html?id=${userId}`;
-}
-
-// 页面加载时初始化
-document.addEventListener('DOMContentLoaded', function() {
-    // 图片预览
-    const imageInput = document.getElementById('post-images');
-    if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            const preview = document.getElementById('image-preview');
-            preview.innerHTML = '';
-            const files = e.target.files;
-            
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    const img = document.createElement('img');
-                    img.src = ev.target.result;
-                    img.className = 'preview-image';
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(files[i]);
-            }
-        });
-    }
-});

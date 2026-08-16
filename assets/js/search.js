@@ -1,212 +1,128 @@
-/* 楠芳·俱乐部 - 搜索模块 */
-
 const Search = {
-    // 执行搜索
-    perform: function(query) {
-        if (!query || query.trim() === '') {
-            return [];
+    results: [],
+    searchTimer: null,
+
+    async init() {
+        const input = document.getElementById('search-input');
+        if (!input) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const q = urlParams.get('q');
+        if (q) {
+            input.value = q;
+            await this.executeSearch(q);
         }
 
-        const useRegex = document.getElementById('use-regex')?.checked || false;
-        const fuzzy = document.getElementById('fuzzy-search')?.checked || true;
+        input.addEventListener('input', (e) => {
+            if (this.searchTimer) clearTimeout(this.searchTimer);
+            this.searchTimer = setTimeout(() => {
+                this.executeSearch(e.target.value);
+            }, 300);
+        });
 
-        const results = [];
-        const posts = Storage.get('posts') || [];
-        const users = Storage.get('users') || [];
-        const announcements = Storage.get('announcements') || [];
-        const activities = Storage.get('activities') || [];
-
-        // 搜索帖子
-        posts.forEach(post => {
-            const score = this.calculateScore(post, query, useRegex, fuzzy);
-            if (score > 0) {
-                results.push({
-                    type: 'post',
-                    id: post.id,
-                    title: post.title,
-                    content: post.content.substring(0, 150),
-                    matchScore: score,
-                    url: `post-detail.html?id=${post.id}`
-                });
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.executeSearch(e.target.value);
             }
         });
 
-        // 搜索用户
-        users.forEach(user => {
-            const score = this.calculateUserScore(user, query, useRegex, fuzzy);
-            if (score > 0) {
-                results.push({
-                    type: 'user',
-                    id: user.id,
-                    title: user.nickname,
-                    content: user.bio || '暂无简介',
-                    matchScore: score,
-                    url: `user.html?id=${user.id}`
-                });
-            }
-        });
-
-        // 搜索公告
-        announcements.forEach(ann => {
-            const score = this.calculateScore(ann, query, useRegex, fuzzy);
-            if (score > 0) {
-                results.push({
-                    type: 'announcement',
-                    id: ann.id,
-                    title: ann.title,
-                    content: ann.content.substring(0, 150),
-                    matchScore: score,
-                    url: '#'
-                });
-            }
-        });
-
-        // 搜索活动
-        activities.forEach(act => {
-            const score = this.calculateScore(act, query, useRegex, fuzzy);
-            if (score > 0) {
-                results.push({
-                    type: 'activity',
-                    id: act.id,
-                    title: act.title,
-                    content: act.content.substring(0, 150),
-                    matchScore: score,
-                    url: '#'
-                });
-            }
-        });
-
-        // 按匹配度排序
-        return results.sort((a, b) => b.matchScore - a.matchScore);
-    },
-
-    // 计算帖子匹配分数
-    calculateScore: function(item, query, useRegex, fuzzy) {
-        let score = 0;
-        const title = item.title.toLowerCase();
-        const content = (item.content || '').toLowerCase();
-        const searchQuery = query.toLowerCase();
-
-        try {
-            if (useRegex) {
-                // 正则匹配
-                const regex = new RegExp(query, 'gi');
-                const titleMatches = (title.match(regex) || []).length;
-                const contentMatches = (content.match(regex) || []).length;
-                score = titleMatches * 10 + contentMatches;
-            } else if (fuzzy) {
-                // 模糊匹配
-                if (title.includes(searchQuery)) {
-                    score += 10;
-                    // 标题完全匹配加分
-                    if (title === searchQuery) score += 20;
-                }
-                if (content.includes(searchQuery)) {
-                    score += 5;
-                }
-                // 分词匹配
-                const words = searchQuery.split(/\s+/);
-                words.forEach(word => {
-                    if (title.includes(word)) score += 3;
-                    if (content.includes(word)) score += 1;
-                });
-            } else {
-                // 精确匹配
-                if (title === searchQuery) score = 100;
-                else if (title.includes(searchQuery)) score = 50;
-                else if (content.includes(searchQuery)) score = 10;
-            }
-        } catch (e) {
-            console.error('搜索错误:', e);
+        const searchBtn = document.getElementById('search-btn');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                this.executeSearch(input.value);
+            });
         }
-
-        return score;
     },
 
-    // 计算用户匹配分数
-    calculateUserScore: function(user, query, useRegex, fuzzy) {
-        let score = 0;
-        const nickname = (user.nickname || '').toLowerCase();
-        const bio = (user.bio || '').toLowerCase();
-        const qq = (user.qq || '').toLowerCase();
-        const searchQuery = query.toLowerCase();
+    async executeSearch(query) {
+        const container = document.getElementById('search-results');
+        if (!container) return;
 
-        if (nickname.includes(searchQuery)) score += 20;
-        if (qq === searchQuery) score += 100;
-        if (bio.includes(searchQuery)) score += 5;
-
-        return score;
-    },
-
-    // 显示搜索结果
-    displayResults: function(results) {
-        const resultsSection = document.getElementById('search-results');
-        const resultsList = document.getElementById('results-list');
-
-        if (!resultsSection || !resultsList) return;
-
-        resultsSection.style.display = 'block';
-        resultsList.innerHTML = '';
-
-        if (results.length === 0) {
-            resultsList.innerHTML = '<p class="no-results">未找到匹配结果</p>';
+        if (!query.trim()) {
+            container.innerHTML = '<div class="no-results">请输入搜索内容</div>';
             return;
         }
 
-        results.forEach(result => {
-            const item = document.createElement('div');
-            item.className = 'result-item';
-            item.onclick = () => {
-                window.location.href = result.url;
-            };
+        try {
+            const res = await API.search(query.trim());
+            if (res.success) {
+                this.results = res.results || [];
+                this.renderResults();
+            } else {
+                container.innerHTML = '<div class="no-results">搜索失败</div>';
+            }
+        } catch (err) {
+            container.innerHTML = '<div class="no-results">搜索出错，请稍后重试</div>';
+        }
+    },
 
-            const typeLabels = {
-                'post': '帖子',
-                'user': '用户',
-                'announcement': '公告',
-                'activity': '活动'
-            };
+    renderResults() {
+        const container = document.getElementById('search-results');
+        if (!container) return;
 
-            item.innerHTML = `
-                <h3><span class="result-type">[${typeLabels[result.type]}]</span> ${result.title}</h3>
-                <p>${result.content}...</p>
-                <span class="result-match">匹配度: ${Math.round(result.matchScore)}%</span>
-            `;
+        if (this.results.length === 0) {
+            container.innerHTML = '<div class="no-results">未找到相关结果</div>';
+            return;
+        }
 
-            resultsList.appendChild(item);
-        });
+        const grouped = {
+            posts: this.results.filter(r => r.type === 'post'),
+            users: this.results.filter(r => r.type === 'user'),
+            sections: this.results.filter(r => r.type === 'section')
+        };
+
+        let html = '';
+
+        if (grouped.posts.length > 0) {
+            html += '<div class="result-group"><h3>帖子</h3>';
+            grouped.posts.forEach(post => {
+                html += `
+                    <div class="result-item" onclick="window.location.href='post-detail.html?id=${post.id}'">
+                        <div class="result-title">${this.highlight(post.title)}</div>
+                        <div class="result-content">${this.highlight(post.content.substring(0, 150))}</div>
+                        <div class="result-meta">${post.author ? post.author.nickname : '匿名'} · ${new Date(post.createdAt).toLocaleDateString()}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        if (grouped.users.length > 0) {
+            html += '<div class="result-group"><h3>用户</h3>';
+            grouped.users.forEach(user => {
+                html += `
+                    <div class="result-item" onclick="window.location.href='user.html?id=${user.id}'">
+                        <div class="result-title">${this.highlight(user.nickname)}</div>
+                        <div class="result-content">${user.bio || '暂无简介'}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        if (grouped.sections.length > 0) {
+            html += '<div class="result-group"><h3>板块</h3>';
+            grouped.sections.forEach(section => {
+                html += `
+                    <div class="result-item">
+                        <div class="result-title">${this.highlight(section.name)}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        }
+
+        container.innerHTML = html;
+    },
+
+    highlight(text, query) {
+        if (!query) query = document.getElementById('search-input')?.value || '';
+        if (!text || !query) return text || '';
+        const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return (text + '').replace(regex, '<mark>$1</mark>');
     }
 };
 
-// 执行搜索
-function performSearch() {
-    const input = document.getElementById('search-input');
-    const query = input.value.trim();
-    
-    if (!query) {
-        alert('请输入搜索内容');
-        return;
-    }
-
-    const results = Search.perform(query);
-    Search.displayResults(results);
-}
-
-// 搜索输入回车事件
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-
-        // 从URL参数加载搜索词
-        const urlQuery = new URLSearchParams(window.location.search).get('q');
-        if (urlQuery) {
-            searchInput.value = urlQuery;
-            performSearch();
-        }
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    Search.init();
 });

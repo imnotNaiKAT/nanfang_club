@@ -27,8 +27,8 @@ const CONFIG = {
     MIN_YEAR: 2000,
     MAX_YEAR: new Date().getFullYear() + 3,
 
-    // 管理员密钥（实际应该从后端验证）
-    ADMIN_KEY: '@nf.Control~$$410.J908dawDAwd98dajwd08AQWDF89898adwjikdfaadfw*AWdf87a8wdawdawidhihqeifiAWEFoawdfohoqhwefWQEFIowqejfoweofjowhefWEFJOWEFjhowefoijhjowWEFJFOWEHWEF'
+    // 管理员密钥已移至服务器端验证
+    // 前端不再存储管理员密钥
 };
 
 // 导出配置

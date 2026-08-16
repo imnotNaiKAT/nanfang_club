@@ -11,9 +11,24 @@
     <link rel="stylesheet" href="assets/css/themes.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
+    <style>
+        .about-page { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .about-container { background-color: var(--bg-primary); border-radius: var(--border-radius-lg); padding: 32px; }
+        .about-container h1 { font-size: 1.8rem; margin-bottom: 24px; text-align: center; }
+        .about-section { margin-bottom: 28px; }
+        .about-section h2 { font-size: 1.2rem; margin-bottom: 12px; color: var(--primary-color); }
+        .about-section p { line-height: 1.8; color: var(--text-secondary); }
+        .about-section ul { padding-left: 20px; line-height: 2; color: var(--text-secondary); }
+        .disclaimer-box { margin-top: 32px; padding: 20px; background-color: var(--bg-tertiary); border-radius: var(--border-radius-md); border-left: 4px solid var(--warning-color, #f59e0b); }
+        .disclaimer-box h3 { margin-bottom: 8px; color: var(--warning-color, #f59e0b); }
+        .disclaimer-box p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+        @media (max-width: 600px) {
+            .about-container { padding: 20px; }
+            .about-container h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
@@ -29,7 +44,7 @@
                     <input type="text" id="quick-search" placeholder="键入以搜索......">
                     <button onclick="quickSearch()">&#128269;</button>
                 </div>
-                <a href="settings.html" class="nav-link">设置</a>
+                <a href="settings-new.html" class="nav-link">设置</a>
                 <a href="about.html" class="nav-link active">关于</a>
             </div>
             <div class="nav-right">
@@ -38,43 +53,47 @@
                     <img src="" alt="头像" class="user-avatar" id="nav-avatar">
                     <span id="nav-username"></span>
                 </div>
-                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+                <a href="settings-new.html" class="nav-link" id="login-btn">登录/注册</a>
             </div>
         </div>
     </nav>
 
-    <!-- 主内容 -->
     <main class="main-content about-page">
         <div class="about-container">
             <h1>关于楠芳·俱乐部</h1>
             <section class="about-section">
                 <h2>简介</h2>
-                <p>楠芳·俱乐部是株洲市南方中学的官方社区平台，为师生提供一个分享、交流、互动的在线空间。</p>
+                <p>楠芳·俱乐部是面向株洲市南方中学学生的社区平台，为同学们提供分享、交流、互动的在线空间。大家可以在这里发布帖子、参与讨论、浏览活动公告，共同建设属于我们学生自己的线上家园。</p>
             </section>
             <section class="about-section">
                 <h2>功能特点</h2>
                 <ul>
-                    <li>发布和浏览帖子</li>
-                    <li>参与活动讨论</li>
-                    <li>查看学校公告</li>
-                    <li>个性化设置</li>
+                    <li>发布和浏览帖子，支持图片与Markdown格式</li>
+                    <li>点赞、评论、收藏，互动交流</li>
+                    <li>查看学校公告与活动信息</li>
+                    <li>个人主页与个性化设置</li>
+                    <li>夜间模式与多种主题色</li>
                 </ul>
             </section>
             <section class="about-section">
                 <h2>联系我们</h2>
-                <p>如有问题或建议，请通过管理员反馈。</p>
+                <p>如有问题或建议，请通过管理员反馈。欢迎大家积极参与，共同营造良好的社区氛围。</p>
             </section>
+            <div class="disclaimer-box">
+                <h3>免责声明</h3>
+                <p>本网站为非官方个人网站，仅供株洲市南方中学在校学生使用。本站内容由用户自行发布，不代表学校官方立场。请文明发言，遵守相关法律法规。</p>
+            </div>
         </div>
     </main>
 
-    <!-- 页脚 -->
     <footer class="footer">
-        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p>&copy; 2026 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p class="disclaimer">本网站为非官方个人网站，仅供校内学生使用</p>
     </footer>
 
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/mobile.js"></script>
-    <script src="assets/js/app.js"></script>
 </body>
 </html>

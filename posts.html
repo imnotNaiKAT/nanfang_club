@@ -12,277 +12,34 @@
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
     <style>
-        /* 小红书风格帖子列表 */
-        .posts-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* 瀑布流布局 */
-        .posts-waterfall {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            padding: 16px;
-        }
-
-        @media (max-width: 1200px) {
-            .posts-waterfall {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 900px) {
-            .posts-waterfall {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .posts-waterfall {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                padding: 10px;
-            }
-        }
-
-        /* 帖子卡片 */
-        .post-card {
-            background-color: var(--bg-primary);
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s;
-            break-inside: avoid;
-        }
-
-        .post-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .post-card-image {
-            width: 100%;
-            aspect-ratio: auto;
-            object-fit: cover;
-            display: block;
-        }
-
-        .post-card-content {
-            padding: 12px;
-        }
-
-        .post-card-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .post-card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .post-card-author {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .post-card-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .post-card-nickname {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .post-card-stats {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.85rem;
-            color: var(--text-tertiary);
-        }
-
-        .post-card-stats svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* 发帖按钮 */
-        .create-post-btn {
-            position: fixed;
-            right: 24px;
-            bottom: 90px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .create-post-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
-        }
-
-        @media (min-width: 769px) {
-            .create-post-btn {
-                bottom: 24px;
-            }
-        }
-
-        /* 模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background-color: var(--bg-primary);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-header h2 {
-            font-size: 1.1rem;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
-
-        .modal-body {
-            padding: 16px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 12px;
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        /* 图片预览 */
-        .image-preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .image-preview-item {
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-
-        .image-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .image-preview-remove {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* 无帖子提示 */
-        .no-posts {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-tertiary);
-        }
-
-        .no-posts-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-        }
+        .posts-container { max-width: 1200px; margin: 0 auto; }
+        .posts-waterfall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px; }
+        @media (max-width: 1200px) { .posts-waterfall { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 900px) { .posts-waterfall { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .posts-waterfall { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; } }
+        .post-card { background-color: var(--bg-primary); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; break-inside: avoid; }
+        .post-card:hover { transform: translateY(-4px); }
+        .post-card-image { width: 100%; aspect-ratio: auto; object-fit: cover; display: block; }
+        .post-card-content { padding: 12px; }
+        .post-card-title { font-size: 0.95rem; font-weight: 600; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .post-card-footer { display: flex; align-items: center; justify-content: space-between; }
+        .post-card-author { display: flex; align-items: center; gap: 8px; }
+        .post-card-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+        .post-card-nickname { font-size: 0.85rem; color: var(--text-secondary); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .post-card-stats { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: var(--text-tertiary); }
+        .post-card-stats svg { width: 16px; height: 16px; }
+        .create-post-btn { position: fixed; right: 24px; bottom: 90px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); z-index: 100; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; }
+        .create-post-btn:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5); }
+        @media (min-width: 769px) { .create-post-btn { bottom: 24px; } }
+        .no-posts { text-align: center; padding: 60px 20px; color: var(--text-tertiary); }
+        .no-posts-icon { font-size: 64px; margin-bottom: 16px; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); color: var(--text-primary); padding: 12px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
@@ -299,7 +56,7 @@
                     <button onclick="quickSearch()">&#128269;</button>
                 </div>
                 <a href="messages.html" class="nav-link">消息</a>
-                <a href="settings.html" class="nav-link">设置</a>
+                <a href="settings-new.html" class="nav-link">设置</a>
                 <a href="about.html" class="nav-link">关于</a>
             </div>
             <div class="nav-right">
@@ -308,79 +65,50 @@
                     <img src="" alt="头像" class="user-avatar" id="nav-avatar">
                     <span id="nav-username"></span>
                 </div>
-                <a href="settings.html" class="nav-link" id="login-btn">登录/注册</a>
+                <a href="settings-new.html" class="nav-link" id="login-btn">登录/注册</a>
             </div>
         </div>
     </nav>
 
-    <!-- 主内容 -->
     <main class="main-content posts-container">
-        <!-- 帖子瀑布流 -->
-        <div class="posts-waterfall" id="posts-waterfall">
-            <!-- 帖子将通过JS动态加载 -->
-        </div>
-
-        <!-- 无帖子提示 -->
+        <div class="posts-waterfall" id="posts-waterfall"></div>
         <div class="no-posts" id="no-posts" style="display:none;">
             <div class="no-posts-icon">📝</div>
             <p>暂无帖子，快来发布第一篇吧！</p>
         </div>
     </main>
 
-    <!-- 发帖按钮 -->
-    <a href="create-post.html" class="create-post-btn" style="text-decoration:none;color:white;display:flex;align-items:center;justify-content:center;">+</a>
+    <a href="create-post.html" class="create-post-btn">+</a>
 
-    <!-- 发帖模态框 -->
-    <div class="modal" id="create-post-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>发布帖子</h2>
-                <button class="close-btn" onclick="closeCreatePostModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" id="post-title" placeholder="标题" style="width:100%;padding:12px;border:1px solid var(--border-color);border-radius:8px;background:var(--bg-primary);color:var(--text-primary);">
-                </div>
-                <div class="form-group">
-                    <textarea id="post-content" placeholder="分享你的想法...支持Markdown格式" rows="6" style="width:100%;padding:12px;border:1px solid var(--border-color);border-radius:8px;resize:vertical;background:var(--bg-primary);color:var(--text-primary);"></textarea>
-                </div>
-                <div class="form-group">
-                    <label style="display:block;margin-bottom:8px;color:var(--text-secondary);">添加图片</label>
-                    <input type="file" id="post-images" multiple accept="image/*" onchange="previewImages(this)" style="width:100%;">
-                    <div class="image-preview-container" id="image-preview"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeCreatePostModal()">取消</button>
-                <button class="btn btn-primary" onclick="submitPost()">发布</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 页脚 -->
     <footer class="footer">
-        <p>&copy; 2024 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p>&copy; 2026 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p class="disclaimer">本网站为非官方个人网站，仅供校内学生使用</p>
     </footer>
 
+    <div class="toast" id="toast"></div>
+
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/mobile.js"></script>
-    <script src="assets/js/app.js"></script>
     <script>
-        // 帖子列表页
         let posts = [];
-        let uploadedImages = [];
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadPosts();
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const res = await API.posts.getAll();
+                if (res.success) {
+                    posts = res.posts || [];
+                    loadPosts();
+                } else {
+                    showToast(res.message || '加载帖子失败', 'error');
+                }
+            } catch (e) {
+                showToast('加载帖子失败', 'error');
+            }
         });
 
-        // 加载帖子
         function loadPosts() {
-            posts = Storage.get('posts') || [];
-            const users = Storage.get('users') || [];
-
             const container = document.getElementById('posts-waterfall');
             const noPosts = document.getElementById('no-posts');
 
@@ -389,31 +117,30 @@
                 noPosts.style.display = 'block';
                 return;
             }
-
             noPosts.style.display = 'none';
 
-            // 按时间排序
             posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             container.innerHTML = posts.map(post => {
-                const author = users.find(u => u.id === post.authorId);
-                const avatar = author ? (author.avatar || 'assets/images/default_avatar.png') : 'assets/images/default_avatar.png';
-                const nickname = author ? author.nickname : '未知用户';
+                const author = post.author || {};
+                const avatar = author.avatar || 'assets/images/default_avatar.png';
+                const nickname = author.nickname || '未知用户';
                 const coverImage = post.images && post.images.length > 0 ? post.images[0] : '';
+                const likesCount = post.likes ? post.likes.length : 0;
 
                 return `
                     <div class="post-card" onclick="openPost('${post.id}')">
                         ${coverImage ? `<img src="${coverImage}" alt="封面" class="post-card-image" loading="lazy">` : ''}
                         <div class="post-card-content">
-                            <div class="post-card-title">${post.title}</div>
+                            <div class="post-card-title">${escapeHtml(post.title)}</div>
                             <div class="post-card-footer">
                                 <div class="post-card-author" onclick="event.stopPropagation();openUser('${post.authorId}')">
                                     <img src="${avatar}" alt="头像" class="post-card-avatar">
-                                    <span class="post-card-nickname">${nickname}</span>
+                                    <span class="post-card-nickname">${escapeHtml(nickname)}</span>
                                 </div>
                                 <div class="post-card-stats">
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.81-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                    ${post.likes?.length || 0}
+                                    ${likesCount}
                                 </div>
                             </div>
                         </div>
@@ -422,122 +149,25 @@
             }).join('');
         }
 
-        // 打开帖子
         function openPost(postId) {
             window.location.href = 'post-detail.html?id=' + postId;
         }
 
-        // 打开用户主页
         function openUser(userId) {
             window.location.href = 'user.html?id=' + userId;
         }
 
-        // 显示发帖模态框
-        function showCreatePostModal() {
-            const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                window.location.href = 'settings.html';
-                return;
-            }
-            document.getElementById('create-post-modal').classList.add('show');
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML;
         }
 
-        // 关闭发帖模态框
-        function closeCreatePostModal() {
-            document.getElementById('create-post-modal').classList.remove('show');
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-content').value = '';
-            document.getElementById('post-images').value = '';
-            document.getElementById('image-preview').innerHTML = '';
-            uploadedImages = [];
-        }
-
-        // 预览图片
-        function previewImages(input) {
-            const preview = document.getElementById('image-preview');
-            preview.innerHTML = '';
-            uploadedImages = [];
-
-            if (input.files) {
-                Array.from(input.files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        uploadedImages.push(e.target.result);
-
-                        const item = document.createElement('div');
-                        item.className = 'image-preview-item';
-                        item.innerHTML = `
-                            <img src="${e.target.result}" alt="预览">
-                            <button class="image-preview-remove" onclick="removeImage(${index})">&times;</button>
-                        `;
-                        preview.appendChild(item);
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
-
-        // 移除图片
-        function removeImage(index) {
-            uploadedImages.splice(index, 1);
-            const preview = document.getElementById('image-preview');
-            preview.innerHTML = '';
-
-            uploadedImages.forEach((img, i) => {
-                const item = document.createElement('div');
-                item.className = 'image-preview-item';
-                item.innerHTML = `
-                    <img src="${img}" alt="预览">
-                    <button class="image-preview-remove" onclick="removeImage(${i})">&times;</button>
-                `;
-                preview.appendChild(item);
-            });
-        }
-
-        // 提交帖子
-        function submitPost() {
-            const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
-
-            const title = document.getElementById('post-title').value.trim();
-            const content = document.getElementById('post-content').value.trim();
-
-            if (!title) {
-                alert('请输入标题');
-                return;
-            }
-
-            if (!content) {
-                alert('请输入内容');
-                return;
-            }
-
-            const newPost = {
-                id: 'post_' + Date.now(),
-                title: title,
-                content: content,
-                authorId: currentUser.id,
-                images: uploadedImages,
-                likes: [],
-                collects: [],
-                comments: [],
-                views: 0,
-                createdAt: new Date().toISOString()
-            };
-
-            const allPosts = Storage.get('posts') || [];
-            allPosts.unshift(newPost);
-            Storage.set('posts', allPosts);
-
-            closeCreatePostModal();
-            loadPosts();
-
-            // 显示成功提示
-            alert('发布成功！');
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
     </script>
 </body>

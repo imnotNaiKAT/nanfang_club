@@ -12,365 +12,70 @@
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
     <style>
-        /* 帖子详情页 - 小红书风格 */
-        .post-detail-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--bg-primary);
-        }
-
-        /* 图片轮播 */
-        .post-images-carousel {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4/3;
-            background-color: var(--bg-tertiary);
-            overflow: hidden;
-        }
-
-        .post-images-carousel img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .post-images-carousel img.active {
-            display: block;
-        }
-
-        .carousel-indicator {
-            position: absolute;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            background-color: rgba(0,0,0,0.5);
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .carousel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.5);
-            cursor: pointer;
-        }
-
-        .carousel-dot.active {
-            background-color: white;
-        }
-
-        /* 作者信息区 */
-        .post-author-section {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            gap: 12px;
-        }
-
-        .post-author-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .post-author-info {
-            flex: 1;
-        }
-
-        .post-author-name {
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        .post-author-name:hover {
-            color: var(--primary-color);
-        }
-
-        .post-author-meta {
-            font-size: 0.85rem;
-            color: var(--text-tertiary);
-        }
-
-        .follow-btn {
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: none;
-            background-color: var(--primary-color);
-            color: white;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .follow-btn:hover {
-            opacity: 0.9;
-        }
-
-        .follow-btn.following {
-            background-color: var(--bg-tertiary);
-            color: var(--text-secondary);
-        }
-
-        /* 帖子内容 */
-        .post-content-section {
-            padding: 16px;
-        }
-
-        .post-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .post-content-text {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: var(--text-primary);
-        }
-
-        .post-tags {
-            margin-top: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .post-tag {
-            padding: 4px 12px;
-            background-color: var(--bg-tertiary);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--primary-color);
-        }
-
-        .post-meta-bar {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 12px 16px;
-            font-size: 0.85rem;
-            color: var(--text-tertiary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* 底部操作栏 */
-        .post-action-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--bg-primary);
-            border-top: 1px solid var(--border-color);
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 100;
-        }
-
-        @media (min-width: 769px) {
-            .post-action-bar {
-                position: sticky;
-                margin-top: 24px;
-            }
-        }
-
-        .comment-input-box {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-tertiary);
-            border-radius: 24px;
-            padding: 8px 16px;
-        }
-
-        .comment-input-box input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 0.95rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: transform var(--transition-fast);
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .action-btn .icon {
-            font-size: 1.5rem;
-        }
-
-        .action-btn .count {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .action-btn.liked .icon {
-            color: #ef4444;
-        }
-
-        .action-btn.collected .icon {
-            color: #f59e0b;
-        }
-
-        /* 评论区域 */
-        .comments-section {
-            padding: 16px;
-            border-top: 8px solid var(--bg-tertiary);
-        }
-
-        .comments-header {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .comment-item {
-            display: flex;
-            gap: 12px;
-        }
-
-        .comment-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-
-        .comment-content {
-            flex: 1;
-        }
-
-        .comment-author {
-            font-weight: 500;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .comment-author:hover {
-            color: var(--primary-color);
-        }
-
-        .comment-text {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 4px 0;
-        }
-
-        .comment-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
-        }
-
-        .comment-action {
-            cursor: pointer;
-        }
-
-        .comment-action:hover {
-            color: var(--primary-color);
-        }
-
-        .reply-form {
-            margin-top: 8px;
-            display: none;
-        }
-
-        .reply-form.show {
-            display: flex;
-            gap: 8px;
-        }
-
-        .reply-form input {
-            flex: 1;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-primary);
-            font-size: 0.9rem;
-        }
-
-        /* 评论分页 */
-        .load-more-comments {
-            text-align: center;
-            padding: 16px;
-        }
-
-        .load-more-btn {
-            padding: 8px 24px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background-color: transparent;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        /* 移动端适配 */
+        .post-detail-container { max-width: 800px; margin: 0 auto; background-color: var(--bg-primary); }
+        .post-images-carousel { position: relative; width: 100%; aspect-ratio: 4/3; background-color: var(--bg-tertiary); overflow: hidden; }
+        .post-images-carousel img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .post-images-carousel img.active { display: block; }
+        .carousel-indicator { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; background-color: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px; }
+        .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background-color: rgba(255,255,255,0.5); cursor: pointer; }
+        .carousel-dot.active { background-color: white; }
+        .post-author-section { display: flex; align-items: center; padding: 16px; gap: 12px; }
+        .post-author-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; cursor: pointer; }
+        .post-author-info { flex: 1; }
+        .post-author-name { font-weight: 600; font-size: 1rem; cursor: pointer; }
+        .post-author-name:hover { color: var(--primary-color); }
+        .post-author-meta { font-size: 0.85rem; color: var(--text-tertiary); }
+        .follow-btn { padding: 6px 16px; border-radius: 20px; border: none; background-color: var(--primary-color); color: white; font-size: 0.9rem; cursor: pointer; transition: all var(--transition-fast); }
+        .follow-btn:hover { opacity: 0.9; }
+        .follow-btn.following { background-color: var(--bg-tertiary); color: var(--text-secondary); }
+        .post-content-section { padding: 16px; }
+        .post-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+        .post-content-text { font-size: 1rem; line-height: 1.8; color: var(--text-primary); }
+        .post-tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .post-tag { padding: 4px 12px; background-color: var(--bg-tertiary); border-radius: 20px; font-size: 0.85rem; color: var(--primary-color); }
+        .post-meta-bar { display: flex; align-items: center; gap: 16px; padding: 12px 16px; font-size: 0.85rem; color: var(--text-tertiary); border-top: 1px solid var(--border-color); }
+        .post-action-bar { position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--bg-primary); border-top: 1px solid var(--border-color); padding: 12px 16px; display: flex; align-items: center; gap: 16px; z-index: 100; }
+        @media (min-width: 769px) { .post-action-bar { position: sticky; margin-top: 24px; } }
+        .comment-input-box { flex: 1; display: flex; align-items: center; background-color: var(--bg-tertiary); border-radius: 24px; padding: 8px 16px; }
+        .comment-input-box input { flex: 1; border: none; background: transparent; outline: none; font-size: 0.95rem; }
+        .action-buttons { display: flex; align-items: center; gap: 24px; }
+        .action-btn { display: flex; align-items: center; gap: 4px; cursor: pointer; transition: transform var(--transition-fast); }
+        .action-btn:hover { transform: scale(1.1); }
+        .action-btn .icon { font-size: 1.5rem; }
+        .action-btn .count { font-size: 0.85rem; color: var(--text-secondary); }
+        .action-btn.liked .icon { color: #ef4444; }
+        .action-btn.collected .icon { color: #f59e0b; }
+        .comments-section { padding: 16px; border-top: 8px solid var(--bg-tertiary); }
+        .comments-header { font-size: 1rem; font-weight: 600; margin-bottom: 16px; }
+        .comments-list { display: flex; flex-direction: column; gap: 16px; }
+        .comment-item { display: flex; gap: 12px; }
+        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer; }
+        .comment-content { flex: 1; }
+        .comment-author { font-weight: 500; font-size: 0.9rem; cursor: pointer; }
+        .comment-author:hover { color: var(--primary-color); }
+        .comment-text { font-size: 0.95rem; line-height: 1.5; margin: 4px 0; }
+        .comment-actions { display: flex; align-items: center; gap: 16px; font-size: 0.8rem; color: var(--text-tertiary); }
+        .comment-action { cursor: pointer; }
+        .comment-action:hover { color: var(--primary-color); }
+        .reply-form { margin-top: 8px; display: none; }
+        .reply-form.show { display: flex; gap: 8px; }
+        .reply-form input { flex: 1; padding: 8px 12px; border-radius: 20px; border: 1px solid var(--border-color); background-color: var(--bg-primary); font-size: 0.9rem; }
+        .load-more-comments { text-align: center; padding: 16px; }
+        .load-more-btn { padding: 8px 24px; border-radius: 20px; border: 1px solid var(--border-color); background-color: transparent; cursor: pointer; font-size: 0.9rem; }
         @media (max-width: 768px) {
-            .post-action-bar {
-                padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
-            }
-
-            .action-buttons {
-                gap: 16px;
-            }
-
-            .action-btn .icon {
-                font-size: 1.3rem;
-            }
-
-            .post-images-carousel {
-                aspect-ratio: 1;
-            }
+            .post-action-bar { padding-bottom: calc(12px + env(safe-area-inset-bottom, 0)); }
+            .action-buttons { gap: 16px; }
+            .action-btn .icon { font-size: 1.3rem; }
+            .post-images-carousel { aspect-ratio: 1; }
         }
-
-        /* 无图片时的占位 */
-        .no-image-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            aspect-ratio: 4/3;
-            background-color: var(--bg-tertiary);
-            color: var(--text-tertiary);
-            font-size: 1.2rem;
-        }
+        .no-image-placeholder { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 4/3; background-color: var(--bg-tertiary); color: var(--text-tertiary); font-size: 1.2rem; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); color: var(--text-primary); padding: 12px 24px; border-radius: 8px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-left">
@@ -386,16 +91,13 @@
         </div>
     </nav>
 
-    <!-- 主内容 -->
     <main class="main-content post-detail-page">
         <div class="post-detail-container">
-            <!-- 图片轮播 -->
             <div class="post-images-carousel" id="post-images-carousel">
                 <div class="no-image-placeholder" id="no-image">暂无图片</div>
                 <div class="carousel-indicator" id="carousel-indicator" style="display:none;"></div>
             </div>
 
-            <!-- 作者信息 -->
             <div class="post-author-section">
                 <img src="" alt="头像" class="post-author-avatar" id="author-avatar">
                 <div class="post-author-info">
@@ -405,7 +107,6 @@
                 <button class="follow-btn" id="follow-btn" onclick="toggleFollow()">+ 关注</button>
             </div>
 
-            <!-- 帖子内容 -->
             <div class="post-content-section">
                 <h1 class="post-title" id="post-title"></h1>
                 <div class="post-content-text" id="post-content"></div>
@@ -416,18 +117,14 @@
                 </div>
             </div>
 
-            <!-- 评论区域 -->
             <div class="comments-section">
                 <div class="comments-header">评论 <span id="comment-count">0</span></div>
-                <div class="comments-list" id="comments-list">
-                    <!-- 评论将通过JS动态加载 -->
-                </div>
+                <div class="comments-list" id="comments-list"></div>
                 <div class="load-more-comments" id="load-more-comments" style="display:none;">
                     <button class="load-more-btn" onclick="loadMoreComments()">加载更多评论</button>
                 </div>
             </div>
 
-            <!-- 底部操作栏 -->
             <div class="post-action-bar">
                 <div class="comment-input-box">
                     <input type="text" id="comment-input" placeholder="说点什么..." onkeypress="handleCommentKeypress(event)">
@@ -449,88 +146,85 @@
         </div>
     </main>
 
+    <footer class="footer">
+        <p>&copy; 2026 楠芳·俱乐部 - 株洲市南方中学</p>
+        <p class="disclaimer">本网站为非官方个人网站，仅供校内学生使用</p>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/mobile.js"></script>
-    <script src="assets/js/app.js"></script>
     <script>
-        // 帖子详情页
         let currentPost = null;
         let currentImageIndex = 0;
         let commentsPage = 1;
         const commentsPerPage = 10;
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             const postId = new URLSearchParams(window.location.search).get('id');
             if (postId) {
-                loadPostDetail(postId);
+                await loadPostDetail(postId);
             } else {
                 alert('帖子不存在');
                 history.back();
             }
         });
 
-        // 加载帖子详情
-        function loadPostDetail(postId) {
-            const posts = Storage.get('posts') || [];
-            currentPost = posts.find(p => p.id === postId);
-
-            if (!currentPost) {
-                alert('帖子不存在');
+        async function loadPostDetail(postId) {
+            try {
+                const res = await API.posts.getById(postId);
+                if (!res.success) {
+                    alert(res.message || '帖子不存在');
+                    history.back();
+                    return;
+                }
+                currentPost = res.post;
+                renderPost();
+                renderComments();
+                checkUserInteraction();
+            } catch (e) {
+                console.error('Failed to load post:', e);
+                alert('加载帖子失败');
                 history.back();
-                return;
             }
-
-            // 增加浏览量
-            currentPost.views = (currentPost.views || 0) + 1;
-            Storage.set('posts', posts);
-
-            // 渲染帖子
-            renderPost();
-            renderComments();
-            checkUserInteraction();
         }
 
-        // 渲染帖子
         function renderPost() {
-            // 标题和内容
             document.getElementById('post-title').textContent = currentPost.title;
             document.getElementById('post-content').innerHTML = renderMarkdown(currentPost.content);
             document.getElementById('post-date').textContent = formatDate(new Date(currentPost.createdAt));
             document.getElementById('post-views').textContent = currentPost.views || 0;
 
-            // 作者信息
-            const users = Storage.get('users') || [];
-            const author = users.find(u => u.id === currentPost.authorId);
+            const author = currentPost.author || {};
+            document.getElementById('author-avatar').src = author.avatar || 'assets/images/default_avatar.png';
+            document.getElementById('author-avatar').onclick = () => goToUser(currentPost.authorId);
+            document.getElementById('author-name').textContent = author.nickname || '未知用户';
+            document.getElementById('author-name').onclick = () => goToUser(currentPost.authorId);
+            document.getElementById('author-meta').textContent = (author.grade || '') + '届';
 
-            if (author) {
-                document.getElementById('author-avatar').src = author.avatar || 'assets/images/default_avatar.png';
-                document.getElementById('author-avatar').onclick = () => goToUser(author.id);
-                document.getElementById('author-name').textContent = author.nickname;
-                document.getElementById('author-name').onclick = () => goToUser(author.id);
-                document.getElementById('author-meta').textContent = author.grade + '届';
-
-                // 检查是否已关注
-                const currentUser = Auth.currentUser;
-                if (currentUser && currentUser.following && currentUser.following.includes(author.id)) {
+            const currentUser = Auth.currentUser;
+            if (currentUser && currentUser.id !== currentPost.authorId) {
+                if (currentUser.following && currentUser.following.includes(currentPost.authorId)) {
                     document.getElementById('follow-btn').textContent = '已关注';
                     document.getElementById('follow-btn').classList.add('following');
                 }
+            } else {
+                document.getElementById('follow-btn').style.display = 'none';
             }
 
-            // 图片
             renderImages();
 
-            // 点赞和收藏数
-            document.getElementById('like-count').textContent = currentPost.likes?.length || 0;
-            document.getElementById('collect-count').textContent = currentPost.collects?.length || 0;
+            const likesCount = currentPost.likes ? currentPost.likes.length : 0;
+            const collectsCount = currentPost.collects ? currentPost.collects.length : 0;
+            document.getElementById('like-count').textContent = likesCount;
+            document.getElementById('collect-count').textContent = collectsCount;
 
-            // 页面标题
             document.title = currentPost.title + ' - 楠芳·俱乐部';
         }
 
-        // 渲染图片
         function renderImages() {
             const container = document.getElementById('post-images-carousel');
             const indicator = document.getElementById('carousel-indicator');
@@ -551,11 +245,9 @@
                 imgEl.src = img;
                 imgEl.alt = '图片' + (index + 1);
                 imgEl.className = index === 0 ? 'active' : '';
-                imgEl.onclick = () => changeImage(index);
                 container.appendChild(imgEl);
             });
 
-            // 指示器
             currentPost.images.forEach((_, index) => {
                 const dot = document.createElement('div');
                 dot.className = 'carousel-dot' + (index === 0 ? ' active' : '');
@@ -563,7 +255,6 @@
                 indicator.appendChild(dot);
             });
 
-            // 自动轮播
             if (currentPost.images.length > 1) {
                 setInterval(() => {
                     currentImageIndex = (currentImageIndex + 1) % currentPost.images.length;
@@ -572,166 +263,97 @@
             }
         }
 
-        // 切换图片
         function changeImage(index) {
             currentImageIndex = index;
             const images = document.querySelectorAll('.post-images-carousel img');
             const dots = document.querySelectorAll('.carousel-dot');
-
-            images.forEach((img, i) => {
-                img.classList.toggle('active', i === index);
-            });
-
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+            images.forEach((img, i) => { img.classList.toggle('active', i === index); });
+            dots.forEach((dot, i) => { dot.classList.toggle('active', i === index); });
         }
 
-        // 渲染评论
         function renderComments() {
             const comments = currentPost.comments || [];
-            const startIndex = 0;
-            const endIndex = commentsPage * commentsPerPage;
-            const displayComments = comments.slice(0, endIndex);
-
             const listEl = document.getElementById('comments-list');
-            const users = Storage.get('users') || [];
+            const displayComments = comments.slice(0, commentsPage * commentsPerPage);
 
             listEl.innerHTML = displayComments.map(comment => {
-                const user = users.find(u => u.id === comment.userId);
-                const avatar = user ? (user.avatar || 'assets/images/default_avatar.png') : 'assets/images/default_avatar.png';
-                const nickname = user ? user.nickname : '未知用户';
+                const user = comment.author || {};
+                const avatar = user.avatar || 'assets/images/default_avatar.png';
+                const nickname = user.nickname || '未知用户';
 
                 return `
                     <div class="comment-item">
                         <img src="${avatar}" alt="头像" class="comment-avatar" onclick="goToUser('${comment.userId}')">
                         <div class="comment-content">
-                            <div class="comment-author" onclick="goToUser('${comment.userId}')">${nickname}</div>
-                            <div class="comment-text">${comment.content}</div>
+                            <div class="comment-author" onclick="goToUser('${comment.userId}')">${escapeHtml(nickname)}</div>
+                            <div class="comment-text">${escapeHtml(comment.content)}</div>
                             <div class="comment-actions">
                                 <span>${formatDate(new Date(comment.createdAt))}</span>
                                 <span class="comment-action" onclick="showReplyForm('${comment.id}')">回复</span>
-                                <span class="comment-action" onclick="likeComment('${comment.id}')">&#10084; ${comment.likes?.length || 0}</span>
                             </div>
                             <div class="reply-form" id="reply-form-${comment.id}">
                                 <input type="text" placeholder="回复..." id="reply-input-${comment.id}" onkeypress="handleReplyKeypress(event, '${comment.id}')">
                                 <button class="follow-btn" onclick="submitReply('${comment.id}')">发送</button>
                             </div>
-                            ${renderReplies(comment.replies || [])}
                         </div>
                     </div>
                 `;
             }).join('');
 
             document.getElementById('comment-count').textContent = comments.length;
-
-            // 显示加载更多按钮
             const loadMoreEl = document.getElementById('load-more-comments');
-            loadMoreEl.style.display = comments.length > endIndex ? 'block' : 'none';
+            loadMoreEl.style.display = comments.length > displayComments.length ? 'block' : 'none';
         }
 
-        // 渲染回复
-        function renderReplies(replies) {
-            if (!replies || replies.length === 0) return '';
-
-            const users = Storage.get('users') || [];
-
-            return '<div class="replies-list" style="margin-top:12px;padding-left:12px;border-left:2px solid var(--border-color);">' +
-                replies.map(reply => {
-                    const user = users.find(u => u.id === reply.userId);
-                    const nickname = user ? user.nickname : '未知用户';
-
-                    return `
-                        <div class="comment-item" style="margin-bottom:12px;">
-                            <div class="comment-author" style="font-size:0.85rem;">${nickname}</div>
-                            <div class="comment-text" style="font-size:0.85rem;">${reply.content}</div>
-                        </div>
-                    `;
-                }).join('') +
-                '</div>';
-        }
-
-        // 加载更多评论
         function loadMoreComments() {
             commentsPage++;
             renderComments();
         }
 
-        // 发表评论
-        function submitComment() {
+        async function submitComment() {
             const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
+            if (!currentUser) { alert('请先登录'); return; }
 
             const input = document.getElementById('comment-input');
             const content = input.value.trim();
-
             if (!content) return;
 
-            const posts = Storage.get('posts') || [];
-            const post = posts.find(p => p.id === currentPost.id);
-
-            if (!post.comments) post.comments = [];
-
-            const newComment = {
-                id: 'comment_' + Date.now(),
-                userId: currentUser.id,
-                content: content,
-                likes: [],
-                replies: [],
-                createdAt: new Date().toISOString()
-            };
-
-            post.comments.unshift(newComment);
-            currentPost = post;
-            Storage.set('posts', posts);
-
-            input.value = '';
-            renderComments();
-
-            // 发送通知给作者
-            if (post.authorId !== currentUser.id) {
-                Messages.send(post.authorId, 'comment', `${currentUser.nickname} 评论了你的帖子"${post.title}"`, post.id);
+            try {
+                const res = await API.posts.comment(currentPost.id, content);
+                if (res.success) {
+                    input.value = '';
+                    showToast('评论成功', 'success');
+                    loadPostDetail(currentPost.id);
+                } else {
+                    showToast(res.message || '评论失败', 'error');
+                }
+            } catch (e) {
+                showToast('评论失败', 'error');
             }
         }
 
-        // 回复评论
-        function submitReply(commentId) {
+        async function submitReply(commentId) {
             const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
+            if (!currentUser) { alert('请先登录'); return; }
 
             const input = document.getElementById('reply-input-' + commentId);
             const content = input.value.trim();
-
             if (!content) return;
 
-            const posts = Storage.get('posts') || [];
-            const post = posts.find(p => p.id === currentPost.id);
-            const comment = post.comments.find(c => c.id === commentId);
-
-            if (!comment.replies) comment.replies = [];
-
-            comment.replies.push({
-                id: 'reply_' + Date.now(),
-                userId: currentUser.id,
-                content: content,
-                createdAt: new Date().toISOString()
-            });
-
-            currentPost = post;
-            Storage.set('posts', posts);
-
-            input.value = '';
-            document.getElementById('reply-form-' + commentId).classList.remove('show');
-            renderComments();
+            try {
+                const res = await API.posts.comment(currentPost.id, content, commentId);
+                if (res.success) {
+                    input.value = '';
+                    document.getElementById('reply-form-' + commentId).classList.remove('show');
+                    loadPostDetail(currentPost.id);
+                } else {
+                    showToast(res.message || '回复失败', 'error');
+                }
+            } catch (e) {
+                showToast('回复失败', 'error');
+            }
         }
 
-        // 显示回复框
         function showReplyForm(commentId) {
             const form = document.getElementById('reply-form-' + commentId);
             form.classList.toggle('show');
@@ -740,209 +362,101 @@
             }
         }
 
-        // 点赞评论
-        function likeComment(commentId) {
+        async function toggleLike() {
             const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
+            if (!currentUser) { alert('请先登录'); return; }
 
-            const posts = Storage.get('posts') || [];
-            const post = posts.find(p => p.id === currentPost.id);
-            const comment = post.comments.find(c => c.id === commentId);
-
-            if (!comment.likes) comment.likes = [];
-
-            const userId = currentUser.id;
-            const index = comment.likes.indexOf(userId);
-
-            if (index === -1) {
-                comment.likes.push(userId);
-            } else {
-                comment.likes.splice(index, 1);
-            }
-
-            currentPost = post;
-            Storage.set('posts', posts);
-            renderComments();
-        }
-
-        // 按键处理
-        function handleCommentKeypress(event) {
-            if (event.key === 'Enter') {
-                submitComment();
-            }
-        }
-
-        function handleReplyKeypress(event, commentId) {
-            if (event.key === 'Enter') {
-                submitReply(commentId);
-            }
-        }
-
-        // 点赞帖子
-        function toggleLike() {
-            const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
-
-            const posts = Storage.get('posts') || [];
-            const post = posts.find(p => p.id === currentPost.id);
-
-            if (!post.likes) post.likes = [];
-
-            const userId = currentUser.id;
-            const index = post.likes.indexOf(userId);
-
-            if (index === -1) {
-                post.likes.push(userId);
-                document.getElementById('like-btn').classList.add('liked');
-
-                // 发送通知
-                if (post.authorId !== userId) {
-                    Messages.send(post.authorId, 'like', `${currentUser.nickname} 赞了你的帖子"${post.title}"`, post.id);
-                }
-            } else {
-                post.likes.splice(index, 1);
-                document.getElementById('like-btn').classList.remove('liked');
-            }
-
-            currentPost = post;
-            Storage.set('posts', posts);
-
-            document.getElementById('like-count').textContent = post.likes.length;
-        }
-
-        // 收藏帖子
-        function toggleCollect() {
-            const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
-            }
-
-            const posts = Storage.get('posts') || [];
-            const post = posts.find(p => p.id === currentPost.id);
-
-            if (!post.collects) post.collects = [];
-
-            const userId = currentUser.id;
-            const index = post.collects.indexOf(userId);
-
-            if (index === -1) {
-                post.collects.push(userId);
-                document.getElementById('collect-btn').classList.add('collected');
-            } else {
-                post.collects.splice(index, 1);
-                document.getElementById('collect-btn').classList.remove('collected');
-            }
-
-            currentPost = post;
-            Storage.set('posts', posts);
-
-            // 更新用户收藏列表
-            const users = Storage.get('users') || [];
-            const user = users.find(u => u.id === userId);
-            if (user) {
-                if (!user.collections) user.collections = [];
-                const collectIndex = user.collections.indexOf(currentPost.id);
-                if (collectIndex === -1) {
-                    user.collections.push(currentPost.id);
+            try {
+                const res = await API.posts.like(currentPost.id);
+                if (res.success) {
+                    const likesCount = res.likes ? res.likes.length : ((currentPost.likes ? currentPost.likes.length : 0) + 1);
+                    document.getElementById('like-count').textContent = likesCount;
+                    document.getElementById('like-btn').classList.toggle('liked');
+                    if (currentPost.likes && currentPost.likes.includes(currentUser.id)) {
+                        currentPost.likes = currentPost.likes.filter(id => id !== currentUser.id);
+                    } else {
+                        if (!currentPost.likes) currentPost.likes = [];
+                        currentPost.likes.push(currentUser.id);
+                    }
                 } else {
-                    user.collections.splice(collectIndex, 1);
+                    showToast(res.message || '操作失败', 'error');
                 }
-                Storage.set('users', users);
+            } catch (e) {
+                showToast('操作失败', 'error');
             }
-
-            document.getElementById('collect-count').textContent = post.collects.length;
         }
 
-        // 关注作者
-        function toggleFollow() {
+        async function toggleCollect() {
             const currentUser = Auth.currentUser;
-            if (!currentUser) {
-                alert('请先登录');
-                return;
+            if (!currentUser) { alert('请先登录'); return; }
+
+            try {
+                const res = await API.posts.collect(currentPost.id);
+                if (res.success) {
+                    document.getElementById('collect-count').textContent = res.collects ? res.collects.length : 0;
+                    document.getElementById('collect-btn').classList.toggle('collected');
+                } else {
+                    showToast(res.message || '操作失败', 'error');
+                }
+            } catch (e) {
+                showToast('操作失败', 'error');
             }
-
-            const authorId = currentPost.authorId;
-            if (authorId === currentUser.id) return;
-
-            const users = Storage.get('users') || [];
-            const user = users.find(u => u.id === currentUser.id);
-            const author = users.find(u => u.id === authorId);
-
-            if (!user.following) user.following = [];
-            if (!author.followers) author.followers = [];
-
-            const btn = document.getElementById('follow-btn');
-            const index = user.following.indexOf(authorId);
-
-            if (index === -1) {
-                user.following.push(authorId);
-                author.followers.push(currentUser.id);
-                btn.textContent = '已关注';
-                btn.classList.add('following');
-
-                Messages.send(authorId, 'follow', `${currentUser.nickname} 关注了你`);
-            } else {
-                user.following.splice(index, 1);
-                author.followers = author.followers.filter(id => id !== currentUser.id);
-                btn.textContent = '+ 关注';
-                btn.classList.remove('following');
-            }
-
-            Storage.set('users', users);
-
-            // 更新当前用户
-            Auth.currentUser = user;
-            Storage.set('currentUser', user);
         }
 
-        // 检查用户交互状态
+        async function toggleFollow() {
+            const currentUser = Auth.currentUser;
+            if (!currentUser) { alert('请先登录'); return; }
+            if (currentPost.authorId === currentUser.id) return;
+
+            try {
+                const res = await API.user.follow(currentPost.authorId);
+                if (res.success) {
+                    const btn = document.getElementById('follow-btn');
+                    if (res.following) {
+                        btn.textContent = '已关注';
+                        btn.classList.add('following');
+                    } else {
+                        btn.textContent = '+ 关注';
+                        btn.classList.remove('following');
+                    }
+                    showToast(res.following ? '关注成功' : '取消关注', 'success');
+                } else {
+                    showToast(res.message || '操作失败', 'error');
+                }
+            } catch (e) {
+                showToast('操作失败', 'error');
+            }
+        }
+
         function checkUserInteraction() {
             const currentUser = Auth.currentUser;
             if (!currentUser) return;
-
-            // 检查是否已点赞
             if (currentPost.likes && currentPost.likes.includes(currentUser.id)) {
                 document.getElementById('like-btn').classList.add('liked');
             }
-
-            // 检查是否已收藏
             if (currentPost.collects && currentPost.collects.includes(currentUser.id)) {
                 document.getElementById('collect-btn').classList.add('collected');
             }
         }
 
-        // 分享帖子
         function sharePost() {
             const url = window.location.href;
             if (navigator.share) {
-                navigator.share({
-                    title: currentPost.title,
-                    url: url
-                });
+                navigator.share({ title: currentPost.title, url: url }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(url).then(() => {
-                    alert('链接已复制到剪贴板');
+                    showToast('链接已复制到剪贴板', 'success');
                 });
             }
         }
 
-        // 跳转到用户主页
         function goToUser(userId) {
             window.location.href = 'user.html?id=' + userId;
         }
 
-        // 格式化日期
         function formatDate(date) {
             const now = new Date();
             const diff = Math.floor((now - date) / 1000);
-
             if (diff < 60) return '刚刚';
             if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
             if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
@@ -950,13 +464,28 @@
             return date.toLocaleDateString();
         }
 
-        // 渲染Markdown
         function renderMarkdown(text) {
             return text
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
                 .replace(/`(.+?)`/g, '<code>$1</code>')
                 .replace(/\n/g, '<br>');
+        }
+
+        function handleCommentKeypress(event) { if (event.key === 'Enter') submitComment(); }
+        function handleReplyKeypress(event, commentId) { if (event.key === 'Enter') submitReply(commentId); }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
     </script>
 </body>
